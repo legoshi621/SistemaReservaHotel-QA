@@ -1,0 +1,216 @@
+﻿@model SistemaReservaHotel.Business.DTOs.UsuarioDto
+@{
+    ViewData["Title"] = "Crear Usuario";
+    var roles = ViewBag.Roles as IEnumerable<SistemaReservaHotel.Business.DTOs.RolDto>;
+}
+
+<div class="container mt-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-header text-white border-0"
+                     style="background: linear-gradient(90deg,#0d6efd,#0a58ca);">
+
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Crear Nuevo Usuario
+                    </h4>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form asp-controller="Admin"
+                          asp-action="CreateUsuario"
+                          method="post">
+
+                        <div asp-validation-summary="All"
+                             class="text-danger mb-3"></div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label asp-for="NombreCompleto"
+                                       class="form-label fw-semibold">
+
+                                    Nombre Completo
+
+                                </label>
+
+                                <input asp-for="NombreCompleto"
+                                       class="form-control form-control-lg" />
+
+                                <span asp-validation-for="NombreCompleto"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label asp-for="Email"
+                                       class="form-label fw-semibold">
+
+                                    Email
+
+                                </label>
+
+                                <input asp-for="Email"
+                                       class="form-control form-control-lg" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label for="password"
+                                       class="form-label fw-semibold">
+
+                                    Contraseña
+
+                                </label>
+
+                                <input type="password"
+                                       name="password"
+                                       class="form-control form-control-lg"
+                                       required />
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label asp-for="Telefono"
+                                       class="form-label fw-semibold">
+
+                                    Teléfono
+
+                                </label>
+
+                                <input asp-for="Telefono"
+                                       class="form-control form-control-lg" />
+
+                                <span asp-validation-for="Telefono"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Roles
+                            </label>
+
+                            <div class="card border-0 shadow-sm rounded-3">
+
+                                <div class="card-body">
+
+                                    @if (roles != null && roles.Any())
+                                    {
+                                        @foreach (var rol in roles)
+                                        {
+                                            <div class="form-check mb-2">
+
+                                                <input type="checkbox"
+                                                       name="rolesIds"
+                                                       value="@rol.Id"
+                                                       class="form-check-input"
+                                                       id="rol_@rol.Id" />
+
+                                                <label class="form-check-label"
+                                                       for="rol_@rol.Id">
+
+                                                    <strong>@rol.Nombre</strong>
+
+                                                    @if (!string.IsNullOrEmpty(rol.Descripcion))
+                                                    {
+                                                        <br />
+
+                                                        <small class="text-muted">
+                                                            @rol.Descripcion
+                                                        </small>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted mb-0">
+                                            No hay roles disponibles.
+                                        </p>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3 form-check">
+
+                            <input asp-for="Activo"
+                                   class="form-check-input"
+                                   type="checkbox"
+                                   checked />
+
+                            <label asp-for="Activo"
+                                   class="form-check-label">
+
+                                Usuario Activo
+
+                            </label>
+
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-controller="Admin"
+                                   asp-action="Usuarios"
+                                   class="btn btn-secondary">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Cancelar
+
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-primary shadow-sm">
+
+                                <i class="bi bi-save me-1"></i>
+                                Guardar Usuario
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

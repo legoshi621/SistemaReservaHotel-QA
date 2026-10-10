@@ -1,0 +1,197 @@
+﻿@model IEnumerable<SistemaReservaHotel.Business.DTOs.UsuarioDto>
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-semibold">
+            <i class="bi bi-people me-2"></i>
+            Gestión de Usuarios
+        </h2>
+
+        <a asp-controller="Admin"
+               asp-action="CreateUsuario"
+               class="btn btn-primary shadow-sm">
+
+            <i class="bi bi-person-plus me-1"></i>
+            Nuevo Usuario
+
+        </a>
+
+    </div>
+
+    <div class="card shadow border-0 rounded-4">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle"
+                       id="tablaUsuarios">
+
+                    <thead style="background:#0d6efd; color:white;">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Roles</th>
+                            <th>Estado</th>
+                            <th>Último Acceso</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var usuario in Model)
+                        {
+                            <tr>
+
+                                <td class="fw-semibold">
+                                    @usuario.NombreCompleto
+                                </td>
+
+                                <td>
+                                    <i class="bi bi-envelope me-1 text-muted"></i>
+                                    @usuario.Email
+                                </td>
+
+                                <td>
+                                    @(usuario.Telefono ?? "-")
+                                </td>
+
+                                <td>
+
+                                    @foreach (var rol in usuario.Roles)
+                                    {
+                                        <span class="badge bg-info me-1">
+                                            @rol
+                                        </span>
+                                    }
+
+                                    @if (!usuario.Roles.Any())
+                                    {
+                                        <span class="text-muted">
+                                            Sin roles
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (usuario.Activo)
+                                    {
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (usuario.UltimoAcceso.HasValue)
+                                    {
+                                        <small>
+                                            @usuario.UltimoAcceso.Value.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <small class="text-muted">
+                                            Nunca
+                                        </small>
+                                    }
+
+                                </td>
+
+                                <td class="text-center">
+
+                                    <div class="btn-group btn-group-sm shadow-sm"
+                                         role="group">
+
+                                        <a asp-controller="Admin"
+                                               asp-action="EditUsuario"
+                                               asp-route-id="@usuario.Id"
+                                               class="btn btn-warning"
+                                               title="Editar">
+
+                                            <i class="bi bi-pencil"></i>
+
+                                        </a>
+
+                                        <form asp-controller="Admin"
+                                              asp-action="DeleteUsuario"
+                                              asp-route-id="@usuario.Id"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('¿Desactivar este usuario?');">
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm"
+                                                    title="Desactivar">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+
+        $('#tablaUsuarios').DataTable({
+
+        language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+
+        order: [[0, 'asc']],
+        pageLength: 10
+
+        });
+
+        });
+
+    </script>
+
+}

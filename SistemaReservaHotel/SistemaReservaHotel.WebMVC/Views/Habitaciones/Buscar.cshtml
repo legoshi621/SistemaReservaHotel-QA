@@ -1,0 +1,36 @@
+﻿@using SistemaReservaHotel.Entities
+@model IEnumerable<Habitacion>
+
+<h2>Habitaciones Disponibles</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Tipo</th>
+            <th>Precio</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@item.Numero</td>
+                <td>@item.Tipo</td>
+                <td>@item.PrecioBase</td>
+
+                <td>
+                    <a asp-action="Detalle" asp-route-id="@item.Id">Ver</a>
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

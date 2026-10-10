@@ -1,0 +1,261 @@
+﻿@model SistemaReservaHotel.Business.DTOs.RolDto
+@{
+    ViewData["Title"] = "Asignar Permisos";
+
+    var todosPermisos = ViewBag.TodosPermisos as IEnumerable<SistemaReservaHotel.Business.DTOs.PermisoDto>;
+
+    var permisosPorCategoria = todosPermisos?
+        .GroupBy(p => p.Categoria ?? "General")
+        .OrderBy(g => g.Key)
+        .ToList();
+}
+
+<div class="container-fluid mt-4">
+
+    <!-- Header -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+
+            <h4 class="mb-0">
+                <i class="bi bi-key text-primary"></i>
+                Gestionar Permisos
+            </h4>
+
+            <span class="badge bg-primary fs-6">
+                @Model.Nombre
+            </span>
+
+        </div>
+    </div>
+
+
+    <!-- Información del rol -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <h5 class="mb-2">
+                        <i class="bi bi-shield-check text-success"></i>
+                        @Model.Nombre
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        @(string.IsNullOrEmpty(Model.Descripcion)
+                            ? "Este rol no tiene descripción."
+                            : Model.Descripcion)
+                    </p>
+
+                </div>
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    <span class="badge bg-success p-3 fs-6">
+                        <i class="bi bi-check-circle"></i>
+                        @Model.PermisosIds.Count Permisos
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Permisos -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            @if (permisosPorCategoria != null && permisosPorCategoria.Any())
+            {
+
+                <div class="accordion" id="accordionPermisos">
+
+                    @{
+                        int categoriaIndex = 0;
+                    }
+
+                    @foreach (var categoria in permisosPorCategoria)
+                    {
+                        var collapseId = $"collapse{categoriaIndex}";
+                        var headingId = $"heading{categoriaIndex}";
+                        var permisosCategoria = categoria.ToList();
+
+                        var permisosAsignados =
+                            permisosCategoria.Count(p => Model.PermisosIds.Contains(p.Id));
+
+                        <div class="accordion-item">
+
+                            <h2 class="accordion-header" id="@headingId">
+
+                                <button class="accordion-button @(categoriaIndex > 0 ? "collapsed" : "")"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#@collapseId">
+
+                                    <div class="d-flex justify-content-between w-100 me-3">
+
+                                        <span>
+                                            <i class="bi bi-folder2-open text-primary"></i>
+                                            <strong>@categoria.Key</strong>
+                                        </span>
+
+                                        <span class="badge bg-primary">
+                                            @permisosAsignados / @permisosCategoria.Count
+                                        </span>
+
+                                    </div>
+
+                                </button>
+
+                            </h2>
+
+
+                            <div id="@collapseId"
+                                 class="accordion-collapse collapse @(categoriaIndex == 0 ? "show" : "")"
+                                 data-bs-parent="#accordionPermisos">
+
+                                <div class="accordion-body">
+
+                                    <div class="row">
+
+                                        @foreach (var permiso in permisosCategoria)
+                                        {
+                                            var tienePermiso = Model.PermisosIds.Contains(permiso.Id);
+
+                                            <div class="col-md-6 mb-3">
+
+                                                <div class="card shadow-sm border-0 @(tienePermiso ? "border-success border-2" : "")">
+
+                                                    <div class="card-body py-3">
+
+                                                        <div class="d-flex justify-content-between align-items-center">
+
+                                                            <div>
+
+                                                                @if (tienePermiso)
+                                                                {
+                                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="bi bi-circle text-muted"></i>
+                                                                }
+
+                                                                <strong class="ms-2">
+                                                                    @permiso.Nombre
+                                                                </strong>
+
+                                                                @if (!string.IsNullOrEmpty(permiso.Descripcion))
+                                                                {
+                                                                    <div class="text-muted small ms-4">
+                                                                        @permiso.Descripcion
+                                                                    </div>
+                                                                }
+
+                                                            </div>
+
+                                                            <div>
+
+                                                                @if (tienePermiso)
+                                                                {
+                                                                    <form asp-controller="Roles"
+                                                                          asp-action="RemoverPermiso"
+                                                                          method="post"
+                                                                          class="d-inline">
+
+                                                                        <input type="hidden" name="rolId" value="@Model.Id" />
+                                                                        <input type="hidden" name="permisoId" value="@permiso.Id" />
+
+                                                                        <button class="btn btn-sm btn-outline-danger"
+                                                                                title="Remover permiso">
+
+                                                                            <i class="bi bi-dash-circle"></i>
+
+                                                                        </button>
+
+                                                                    </form>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <form asp-controller="Roles"
+                                                                          asp-action="AsignarPermiso"
+                                                                          method="post"
+                                                                          class="d-inline">
+
+                                                                        <input type="hidden" name="rolId" value="@Model.Id" />
+                                                                        <input type="hidden" name="permisoId" value="@permiso.Id" />
+
+                                                                        <button class="btn btn-sm btn-success"
+                                                                                title="Asignar permiso">
+
+                                                                            <i class="bi bi-plus-circle"></i>
+
+                                                                        </button>
+
+                                                                    </form>
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        categoriaIndex++;
+                    }
+
+                </div>
+
+            }
+            else
+            {
+
+                <div class="alert alert-warning text-center">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+                    No hay permisos disponibles en el sistema.
+
+                </div>
+
+            }
+
+            <hr class="my-4" />
+
+            <div class="text-center">
+
+                <a asp-controller="Roles"
+                       asp-action="Index"
+                       class="btn btn-primary">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Volver a Roles
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

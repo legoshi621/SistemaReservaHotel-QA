@@ -1,0 +1,42 @@
+﻿@model IEnumerable<SistemaReservaHotel.Entities.Reserva>
+
+<h2>Reporte de Reservas</h2>
+
+<form method="get">
+
+    <label>Inicio</label>
+    <input type="date" name="inicio" />
+
+    <label>Fin</label>
+    <input type="date" name="fin" />
+
+    <button type="submit">Generar</button>
+
+</form>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.NombreCliente</td>
+                <td>@r.FechaEntrada.ToShortDateString()</td>
+                <td>@r.FechaSalida.ToShortDateString()</td>
+                <td>@r.PrecioTotal</td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>
