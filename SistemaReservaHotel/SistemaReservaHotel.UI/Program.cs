@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SistemaReservaHotel.DataAccess;
 using SistemaReservaHotel.DataAccess.Repositories;
 using SistemaReservaHotel.Business.Interfaces;
-using SistemaReservaHotel.Business.Services; // Asegúrate que el namespace sea correcto (Services con S mayúscula)
+using SistemaReservaHotel.Business.Services;
 using SistemaReservaHotel.UI.Components;
-using SistemaReservaHotel.Business.services;
 
 var builder = WebApplication.CreateBuilder(args);
 

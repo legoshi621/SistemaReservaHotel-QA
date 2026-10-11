@@ -1,20 +1,70 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# 🏨 Sistema de Reserva de Hotel (`SistemaReservaHotel`)
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+> **Institución:** ESFE-AGAPE (2026)  
+> **Plataforma:** .NET 10.0 (C#)  
+> **Arquitectura:** N-Capas (N-Layer Architecture) con ASP.NET Core MVC & Blazor
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+---
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## 📖 Documentación Completa
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+Para consultar la **descripción exhaustiva de cada funcionalidad, entidades, base de datos, historias de usuario y stack tecnológico**, revisa el archivo de documentación oficial en la raíz del proyecto:
+
+👉 **[DOCUMENTACION_SISTEMA.md](DOCUMENTACION_SISTEMA.md)**
+
+---
+
+## ⚡ Resumen de Funcionalidades Principales
+
+1. **🔐 Seguridad y Autenticación Basada en Roles (RBAC):**
+   - Inicio de sesión con cookies cifradas y validación SHA-256.
+   - Registro de usuarios con rol predeterminado.
+   - Claims de identidad, roles y permisos granulares.
+   - Semilla automática (`DbInitializer`) con 5 roles, 18 permisos y usuario Administrador maestro (`admin@facturacion.com` / `Admin123!`).
+
+2. **👥 Administración de Usuarios y Privilegios (`AdminController` & `RolesController`):**
+   - Catálogo de usuarios con estado activo/inactivo y último acceso.
+   - Alta, edición y desactivación de usuarios.
+   - Asignación y remoción dinámica de roles.
+   - Matriz de permisos clasificados por categorías (*Ventas, Clientes, Productos, Reportes, Administración*).
+
+3. **🛏️ Gestión de Habitaciones y Disponibilidad (`HabitacionesController`):**
+   - Catálogo de habitaciones con amenidades (WiFi, TV, A/C, Jacuzzi), capacidad y precio base.
+   - Algoritmo de validación de disponibilidad sin solapamiento de fechas.
+   - Historial de estados de habitación.
+
+4. **📅 Reservas Administrativas (Historias de Usuario):**
+   - **US-14 (Ver Reservas por Día):** Consulta de reservas activas filtradas por fecha con cálculo de noches.
+   - **US-16 (Crear Reserva con Tarifa por Temporada):** Creación de reservas aplicando automáticamente precios dinámicos según temporada (Alta, Media, Baja).
+
+5. **📊 Reportería Ejecutiva:**
+   - **US-15 (Reporte de Reservas):** Auditoría y reportes filtrando por rango de fechas (inicio y fin) con montos totales.
+
+6. **💳 Pagos y Facturación:**
+   - Registro de transacciones con precisión decimal y múltiples métodos de pago (Efectivo, Tarjeta, etc.).
+
+---
+
+## 🛠 Stack Tecnológico
+
+- **Lenguaje:** C# 12 / 13
+- **Plataforma:** .NET 10.0
+- **Framework Web:** ASP.NET Core MVC y Blazor Web App
+- **ORM:** Entity Framework Core 10.0.3 (Code-First)
+- **Base de Datos:** Microsoft SQL Server
+- **Frontend:** Razor Views, Bootstrap 5.3, Bootstrap Icons, jQuery, DataTables, SweetAlert2
+- **Patrones:** Repository Pattern, Unit of Work, DTO Pattern, Inyección de Dependencias
+
+---
+
+## 🚀 Puesta en Marcha
+
+1. Configurar la cadena de conexión en `SistemaReservaHotel.WebMVC/appsettings.json`.
+2. Ejecutar la aplicación:
+   ```bash
+   cd SistemaReservaHotel/SistemaReservaHotel.WebMVC
+   dotnet run
+   ```
+3. Iniciar sesión con:
+   - **Usuario:** `admin@facturacion.com`
+   - **Contraseña:** `Admin123!`

@@ -1,4 +1,4 @@
-﻿using SistemaReservaHotel.Business.DTOs;
+using SistemaReservaHotel.Business.DTOs;
 using SistemaReservaHotel.Business.Services;
 using SistemaReservaHotel.DataAccess; // Donde tienes tu Repositorio
 using SistemaReservaHotel.DataAccess.UnitOfWork;
@@ -6,7 +6,7 @@ using SistemaReservaHotel.Entities;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SistemaReservaHotel.Business.services
+namespace SistemaReservaHotel.Business.Services
 {
     public class UsuarioService : IUsuarioService
     {

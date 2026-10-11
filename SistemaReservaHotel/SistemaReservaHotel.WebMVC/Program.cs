@@ -1,28 +1,17 @@
-<<<<<<< HEAD
-using Microsoft.EntityFrameworkCore;
-using SistemaReservaHotel.DataAccess;
-=======
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SistemaReservaHotel.Business.Interfaces;
-using SistemaReservaHotel.Business.services;
 using SistemaReservaHotel.Business.Services;
 using SistemaReservaHotel.DataAccess;
 using SistemaReservaHotel.DataAccess.Seed;
 using SistemaReservaHotel.DataAccess.UnitOfWork;
->>>>>>> 34195251ee1393b078cb742d68d0fe32b1de12fb
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ═══ SERVICIOS MVC ═══════════════════════════════════════════════
 builder.Services.AddControllersWithViews();
 
-<<<<<<< HEAD
-// registrar AppDbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
-=======
+// ═══ BASE DE DATOS Y MIGRACIONES ═════════════════════════════════
 // ═══ BASE DE DATOS Y MIGRACIONES ═════════════════════════════════
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -64,9 +53,7 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
 });
->>>>>>> 34195251ee1393b078cb742d68d0fe32b1de12fb
 
 var app = builder.Build();
 
@@ -89,8 +76,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-<<<<<<< HEAD
-=======
 // ═══ SEED DE DATOS INICIALES ═══════════════════════════════════
 using (var scope = app.Services.CreateScope())
 {
@@ -106,6 +91,4 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Error al ejecutar seed de datos");
     }
 }
-
->>>>>>> 34195251ee1393b078cb742d68d0fe32b1de12fb
 app.Run();
