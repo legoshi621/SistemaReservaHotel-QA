@@ -293,6 +293,8 @@ Control operativo de las reservas dentro de la administración hotelera:
 | **US-SEC-01** | **Autenticación Segura y Claims** | `AccountController.cs` (`Login`/`Register`) | Inicio de sesión con SHA-256, expiración de cookies, asignación de claims y control de acceso denegado. |
 | **US-SEC-02** | **Administración de Cuentas y Roles** | `AdminController.cs` & `RolesController.cs` | Gestión de usuarios, asignación y desasignación de roles y matriz de permisos por categoría. |
 
+> 💡 **Nota QA / Azure DevOps:** Para el desglose detallado de criterios de aceptación en formato Gherkin, tareas técnicas (Tasks), planes de prueba (Azure Test Plans), casos de prueba paso a paso y matriz de trazabilidad (RTM), consultar: [AZURE_DEVOPS_QA.md](AZURE_DEVOPS_QA.md).
+
 ---
 
 ## 🚦 Matriz de Rutas y Endpoints (MVC)

@@ -1,0 +1,90 @@
+# ==============================================================================
+# Azure DevOps Pipeline - SistemaReservaHotel QA
+# ==============================================================================
+# Proyecto: SistemaReservaHotel-QA
+# Organización: cc25003
+# Test Plan: #1054 | Test Suite: #1055 (Casos #1046 a #1053)
+# Rama: feature/pruebas-qa
+# ==============================================================================
+
+trigger:
+  branches:
+    include:
+      - feature/pruebas-qa
+      - develop
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: 'SistemaReservaHotel/SistemaReservaHotel.slnx'
+  buildConfiguration: 'Release'
+  testProject: 'SistemaReservaHotel/SistemaReservaHotel.Tests/SistemaReservaHotel.Tests.csproj'
+  testResultsDir: '$(Agent.TempDirectory)/TestResults'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Instalar .NET SDK 10.x (incluyendo Preview)'
+  inputs:
+    packageType: 'sdk'
+    version: '10.x'
+    includePreviewVersions: true
+
+- powershell: |
+    Write-Host "Verificando y arrancando servicios de base de datos en el agente..."
+    Get-Service -Name *SQL* | Start-Service -ErrorAction SilentlyContinue
+    sqllocaldb start mssqllocaldb -ErrorAction SilentlyContinue
+    sqllocaldb info mssqllocaldb -ErrorAction SilentlyContinue
+  displayName: 'Inicializar Servicios SQL / LocalDB en el Agente'
+  continueOnError: true
+
+- powershell: |
+    Write-Host "Limpiando directorio de resultados de pruebas para evitar colisiones: $(testResultsDir)"
+    if (Test-Path "$(testResultsDir)") {
+        Remove-Item -Path "$(testResultsDir)" -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path "$(testResultsDir)" -Force | Out-Null
+  displayName: 'Limpiar Directorio de Resultados TRX'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restaurar paquetes NuGet'
+  inputs:
+    command: 'restore'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Compilar Solución N-Capas'
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Ejecutar Suite QA (TC-01 a TC-08) y Generar TRX'
+  inputs:
+    command: 'test'
+    projects: '$(testProject)'
+    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(testResultsDir)"'
+  continueOnError: true # Permite capturar y publicar el fallo legítimo de TC-06
+
+- task: PublishTestResults@2
+  displayName: 'Publicar Resultados TRX en Azure Test Plans'
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: '**/*.trx'
+    searchFolder: '$(testResultsDir)'
+    mergeTestResults: true
+    testRunTitle: 'Ejecución Automatizada QA - Test Plan #1054'
+    failTaskOnFailedTests: false
+  condition: succeededOrFailed()
+
+- powershell: |
+    Write-Host "Sincronizando ejecución con Test Plan #1054 / Suite #1055..."
+    $trxFile = Get-ChildItem -Path "$(testResultsDir)" -Filter "*.trx" | Select-Object -First 1
+    if ($trxFile) {
+        Write-Host "Archivo TRX detectado: $($trxFile.FullName)"
+    } else {
+        Write-Host "No se encontró archivo TRX en $(testResultsDir)."
+    }
+  displayName: 'Verificar Artefacto TRX y Reporte de Pruebas'
+  condition: succeededOrFailed()

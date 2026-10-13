@@ -6,11 +6,12 @@
 
 ---
 
-## 📖 Documentación Completa
+## 📖 Documentación Completa del Proyecto
 
-Para consultar la **descripción exhaustiva de cada funcionalidad, entidades, base de datos, historias de usuario y stack tecnológico**, revisa el archivo de documentación oficial en la raíz del proyecto:
+El repositorio cuenta con dos documentos oficiales exhaustivos en la raíz del proyecto:
 
-👉 **[DOCUMENTACION_SISTEMA.md](DOCUMENTACION_SISTEMA.md)**
+1. 👉 **[DOCUMENTACION_SISTEMA.md](DOCUMENTACION_SISTEMA.md):** Manual técnico y funcional de la solución, arquitectura N-Capas, catálogo de entidades, base de datos y matriz de endpoints MVC.
+2. 👉 **[AZURE_DEVOPS_QA.md](AZURE_DEVOPS_QA.md):** Gestión completa del proyecto en Azure DevOps y QA: desglose de Épicas, Historias de Usuario (US-14, US-15, US-16, US-SEC-01, etc.), Criterios de Aceptación (Gherkin), Tareas técnicas (Tasks), Planes de Pruebas (Test Plans / Suites / Test Cases paso a paso), Gestión de Defectos (Bugs) y Matriz de Trazabilidad RTM.
 
 ---
 
