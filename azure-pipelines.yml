@@ -13,8 +13,10 @@ trigger:
       - feature/pruebas-qa
       - develop
 
+
 pool:
-  vmImage: 'windows-latest'
+  name: 'Default'
+
 
 variables:
   solution: 'SistemaReservaHotel/SistemaReservaHotel.slnx'
