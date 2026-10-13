@@ -611,7 +611,12 @@ Para garantizar la integridad del código fuente productivo y al mismo tiempo pe
 
 ## 13. Pipeline de Azure DevOps (`azure-pipelines.yml`) y Resultados VSTest / TRX
 
-Se creó en la raíz del repositorio el archivo de configuración `azure-pipelines.yml` estructurado para la integración continua en Azure Pipelines:
+Se creó en la raíz del repositorio el archivo de configuración `azure-pipelines.yml` estructurado para la integración continua en Azure Pipelines, y se registró exitosamente en el proyecto de Azure DevOps:
+
+- **Pipeline Creado:** `SistemaReservaHotel-QA-CI` (ID: `1`)
+- **URL de Definición del Pipeline:** [Ver Pipeline #1 en Azure DevOps](https://dev.azure.com/cc25003/9e11d8d8-e394-4b89-9068-01b493cb1de1/_build/definition?definitionId=1)
+- **Repositorio Asociado:** `SistemaReservaHotel-QA` (ID: `1b1f3345-2aaf-43c9-8a65-630a403f2077`)
+- **Rama Vinculada:** `refs/heads/feature/pruebas-qa` (Commit: `f61bcb283c946f3d60998e7f7ab637ccbb3104fe`)
 
 ```yaml
 # ==============================================================================
@@ -630,13 +635,30 @@ variables:
   solution: 'SistemaReservaHotel/SistemaReservaHotel.slnx'
   buildConfiguration: 'Release'
   testProject: 'SistemaReservaHotel/SistemaReservaHotel.Tests/SistemaReservaHotel.Tests.csproj'
+  testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Instalar .NET SDK 10.x'
+  displayName: 'Instalar .NET SDK 10.x (incluyendo Preview)'
   inputs:
     packageType: 'sdk'
     version: '10.x'
+    includePreviewVersions: true
+
+- powershell: |
+    Write-Host "Verificando y arrancando servicios de base de datos en el agente..."
+    Get-Service -Name *SQL* | Start-Service -ErrorAction SilentlyContinue
+    sqllocaldb start mssqllocaldb -ErrorAction SilentlyContinue
+  displayName: 'Inicializar Servicios SQL / LocalDB en el Agente'
+  continueOnError: true
+
+- powershell: |
+    Write-Host "Limpiando directorio de resultados de pruebas para evitar colisiones: $(testResultsDir)"
+    if (Test-Path "$(testResultsDir)") {
+        Remove-Item -Path "$(testResultsDir)" -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path "$(testResultsDir)" -Force | Out-Null
+  displayName: 'Limpiar Directorio de Resultados TRX'
 
 - task: DotNetCoreCLI@2
   displayName: 'Restaurar paquetes NuGet'
@@ -656,23 +678,32 @@ steps:
   inputs:
     command: 'test'
     projects: '$(testProject)'
-    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(Agent.TempDirectory)/TestResults"'
+    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(testResultsDir)"'
   continueOnError: true # Permite capturar y publicar el fallo legítimo de TC-06
 
 - task: PublishTestResults@2
   displayName: 'Publicar Resultados TRX en Azure Test Plans'
   inputs:
     testResultsFormat: 'VSTest'
-    testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
+    testResultsFiles: '**/*.trx'
+    searchFolder: '$(testResultsDir)'
     mergeTestResults: true
     testRunTitle: 'Ejecución Automatizada QA - Test Plan #1054'
     failTaskOnFailedTests: false
   condition: succeededOrFailed()
 ```
 
-### Archivo de Resultados `.trx` Generado:
+### 13.1 Ejecución Real del Pipeline en la Nube
+- **Ejecución Disparada:** Build ID `1` (Build Number `20261013.1`).
+- **URL del Build Report:** [Abrir Ejecución Build #1 en Azure DevOps](https://dev.azure.com/cc25003/9e11d8d8-e394-4b89-9068-01b493cb1de1/_build/results?buildId=1)
+- **Estado de la Compilación:** `Failed / Stopped` (Duración: 0 segundos).
+- **Causa Raíz Registrada en Azure DevOps:**
+  > `No hosted parallelism has been purchased or granted. Please set up billing or purchase parallel jobs. Learn more: https://aka.ms/ci-cd-concurrent-pipelines`
+- **Explicación:** Microsoft Azure DevOps restringe por política de seguridad los agentes gratuitos hospedados en la nube (*Hosted Agents*) para organizaciones nuevas hasta que el administrador solicita paralelismo gratuito mediante el formulario oficial o conecta un agente auto-hospedado (*Self-Hosted Agent*).
+
+### 13.2 Archivo de Resultados `.trx` Generado Localmente
 - **Ubicación:** `SistemaReservaHotel/TestResults/SistemaReservaHotel_QA_TestResults.trx`
-- **TestRun ID:** `d870917d-a0cd-4349-bf61-d239448c9bfa`
+- **TestRun ID Local:** `d870917d-a0cd-4349-bf61-d239448c9bfa`
 - **Total de Pruebas Ejecutadas:** 8
 - **Superadas (Passed):** 7
 - **Fallidas (Failed):** 1 (`TC_06_ValidarCalculoDinamicoTarifaTemporadaAlta_3Noches_X_120`)
@@ -685,34 +716,20 @@ steps:
 ### 14.1 Estado Actual en Azure DevOps
 - **Test Plan #1054 / Suite #1055:** Los 8 casos de prueba (`#1046` a `#1053`) tienen sus Test Points (1 a 8) en estado `Active / Not Run`.
 - **Comentarios de Auditoría:** Cada uno de los Work Items cuenta con su respectivo comentario formal de auditoría y vinculación en su historial de revisiones (`State: Ready`).
-- **Inexistencia de Test Run ID en la Nube:** No existe un Test Run ID generado directamente en los servidores de Azure DevOps Services porque el proyecto no cuenta aún con un agente de compilación (Build Agent) en ejecución ni con credenciales PAT con alcance `Test Management (Read & Write)`.
+- **Inexistencia de Test Run ID en la Nube:** Debido a que el Build ID 1 fue detenido por la política de paralelismo de Microsoft antes de ejecutar las tareas del agente, la tarea `PublishTestResults@2` no llegó a generar el Test Run en la nube.
 
-### 14.2 Procedimiento para que el Administrador Complete la Publicación Formal
+### 14.2 Procedimiento para Desbloquear la Ejecución en la Nube
 
-#### Opción A: Ejecutar el Pipeline en Azure Pipelines (Recomendada)
-1. Ingresar a Azure DevOps: `https://dev.azure.com/cc25003/SistemaReservaHotel-QA`.
-2. Navegar a **Pipelines** -> **New Pipeline**.
-3. Seleccionar **Azure Repos Git** y elegir el repositorio `SistemaReservaHotel-QA`.
-4. Seleccionar **Existing Azure Pipelines YAML file** y apuntar a `azure-pipelines.yml` en la rama `feature/pruebas-qa`.
-5. Presionar **Run**.
-6. La tarea `PublishTestResults@2` leerá el reporte `.trx` y creará automáticamente el **Test Run formal**, asociando los resultados a la pestaña de Tests.
+Para que los agentes de compilación puedan ejecutar el pipeline en Azure DevOps, el administrador dispone de dos vías oficiales:
 
-#### Opción B: Publicación vía Azure DevOps REST API con PAT
-Si el administrador dispone de un PAT con alcance `Test Management (Write)`:
-```bash
-# 1. Crear Test Run formal
-curl -X POST "https://dev.azure.com/cc25003/SistemaReservaHotel-QA/_apis/test/runs?api-version=7.1" \
-  -H "Content-Type: application/json" \
-  -u ":<PAT_TOKEN>" \
-  -d '{
-    "name": "Ejecución QA Formal - Test Plan 1054",
-    "plan": { "id": "1054" },
-    "pointIds": [1, 2, 3, 4, 5, 6, 7, 8]
-  }'
-
-# 2. Actualizar resultados por punto (ej. Punto 6 como Failed, resto como Passed)
-# Usando PATCH _apis/test/runs/{runId}/results?api-version=7.1
-```
+1. **Vía A: Solicitar Paralelismo Gratuito a Microsoft (Hosted Agents):**
+   - Completar el formulario de solicitud de Microsoft: [Azure Pipelines Parallelism Request](https://aka.ms/azpipelines-parallelism-request).
+   - Indicar la organización `cc25003` y el proyecto `SistemaReservaHotel-QA`. La aprobación toma usualmente de 2 a 3 días hábiles.
+2. **Vía B: Configurar un Self-Hosted Agent (Inmediato):**
+   - En Azure DevOps, ir a **Project Settings** -> **Agent pools** -> **Default** -> **New agent**.
+   - Descargar el agente para Windows y ejecutar `config.cmd` vinculándolo con un PAT.
+   - En `azure-pipelines.yml`, cambiar `pool: vmImage: 'windows-latest'` por `pool: name: 'Default'`.
+   - Ejecutar nuevamente el pipeline; el agente local procesará el build, ejecutará las pruebas y publicará los resultados en Azure Test Plans.
 
 ---
 
