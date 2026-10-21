@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SistemaReservaHotel.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,14 @@ namespace SistemaReservaHotel.DataAccess.Seed
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            await context.Database.MigrateAsync();
+            if (context.Database.IsRelational())
+            {
+                await context.Database.MigrateAsync();
+            }
+            else
+            {
+                await context.Database.EnsureCreatedAsync();
+            }
 
             // ═══ SEED PERMISOS ═══
             if (!context.Permisos.Any())

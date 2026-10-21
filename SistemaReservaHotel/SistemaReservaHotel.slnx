@@ -4,6 +4,7 @@
   <Project Path="SistemaReservaHotel.Entities/SistemaReservaHotel.Entities.csproj" />
   <Project Path="SistemaReservaHotel.UI/SistemaReservaHotel.UI.csproj" />
   <Project Path="SistemaReservaHotel.WebMVC/SistemaReservaHotel.WebMVC.csproj" />
+  <Project Path="SistemaReservaHotel.IntegrationTests/SistemaReservaHotel.IntegrationTests.csproj" />
   <Project Path="SistemaReservaHotel.Tests/SistemaReservaHotel.Tests.csproj" />
   <Project Path="SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj" />
 </Solution>
