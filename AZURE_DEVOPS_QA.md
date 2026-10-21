@@ -63,11 +63,10 @@ Los colaboradores del proyecto y sus responsabilidades registradas en Azure DevO
 
 | Miembro del Equipo | Usuario / Cuenta | Rol en Azure DevOps | Responsabilidad Principal |
 | :--- | :--- | :--- | :--- |
-| **Legosi621 / CC25003** | `cc25003@esfe.agape.edu.sv` | **Project Administrator / QA Lead** | Administración del proyecto, diseño de la arquitectura general, gestión de planes de prueba y documentación técnica. |
-| **Daniela Paola Vides Cortez** | `cortezdaniela069@email.com` | **QA Engineer / Security Specialist** | Implementación del módulo RBAC, migraciones de seguridad, interfaz gráfica Razor/Bootstrap y pruebas de autenticación. |
-| **Joselin Herrera** | `joselinflores34@outlook.com` | **QA Analyst / Backend Developer** | Desarrollo y pruebas funcionales de los módulos de reservas administrativas (US-14, US-16) y reportería (US-15). |
-| **Ariel Ascencio** | `isaiascencio45@outlook.com` | **Developer / QA Tester** | Desarrollo de servicios de catálogo de habitaciones, layouts responsivos y pruebas de usabilidad. |
-| **Irving Ramirez** | `irvingenero10@email.com` | **Software Architect / Developer** | Estructuración inicial de la solución N-Capas, configuración de paquetes NuGet e infraestructura base. |
+| **Camila Antonia Calderón Cortez** | `cc25003@esfe.agape.edu.sv` (`cami calderon`) | **Líder de QA / Seguridad** | Coordinación general del Plan de Pruebas; estructuración y trazabilidad en Azure DevOps; diseño de casos para US-SEC-01 (TC-07, TC-08: autenticación, cookies, Claims y RBAC); consolidación de métricas y entrega. |
+| **Joselin Esmeralda Herrera Flores** | `joselinflores34@outlook.com` | **Analista de Pruebas (Reportes y API)** | Diseño de casos para US-15 (TC-03, TC-04: rango de fechas y sumatoria financiera); planificación de pruebas de API (endpoints HTTP en controladores MVC) y elaboración de la plantilla de API. |
+| **Carlos Alonso Miranda Rivas** | `cc25003@esfe.agape.edu.sv` (`Legosi621`) | **Tester de Regresión y Base de Datos** | Preparación y aislamiento de la base de datos SistemaReservaHotel_QA; diseño de casos para US-14 (TC-01, TC-02: consulta de estancias, cálculo de noches y SLA HTTP 200); soporte técnico en regresión y CI/CD. |
+| **Ariel Isai Ascencio Ramos** | `isaiascencio45@outlook.com` | **Tester de Reservas y Defectos** | Diseño de casos para US-16 (TC-05, TC-06: algoritmo anticolisión y cálculo dinámico de PrecioTotal); preparación de la plantilla de pruebas unitarias y seguimiento del defecto Bug #1056. |
 
 ---
 
@@ -165,7 +164,7 @@ A continuación se detalla cada Historia de Usuario registrada en Azure Boards c
 - **Feature:** Seguridad RBAC y Cuentas
 - **Prioridad:** Alta (P1)
 - **Estimación:** 5 Story Points
-- **Asignado a:** Daniela Paola Vides Cortez
+- **Asignado a:** Camila Antonia Calderón Cortez
 - **Descripción:**
   > **Como** usuario o administrador del sistema,  
   > **quiero** iniciar sesión con mis credenciales (correo y contraseña),  
@@ -203,7 +202,7 @@ Escenario: Registro público de nuevo usuario
 - **Feature:** Seguridad RBAC y Cuentas
 - **Prioridad:** Alta (P1)
 - **Estimación:** 5 Story Points
-- **Asignado a:** Daniela Paola Vides Cortez
+- **Asignado a:** Camila Antonia Calderón Cortez
 - **Descripción:**
   > **Como** administrador general del hotel,  
   > **quiero** listar, crear, editar y asignar roles a los usuarios del personal,  
@@ -224,7 +223,7 @@ Escenario: Registro público de nuevo usuario
 - **Feature:** Seguridad RBAC y Cuentas
 - **Prioridad:** Media (P2)
 - **Estimación:** 3 Story Points
-- **Asignado a:** Daniela Paola Vides Cortez
+- **Asignado a:** Camila Antonia Calderón Cortez
 - **Descripción:**
   > **Como** administrador de sistemas,  
   > **quiero** definir roles personalizados y asociarles permisos por categoría,  
@@ -432,17 +431,17 @@ Cada Historia de Usuario fue descompuesta en tareas técnicas asignadas a los mi
 
 | ID Tarea | US Asociada | Título de la Tarea Técnica | Capa Arquitectónica | Estimación (Horas) | Responsable | Estado |
 | :---: | :---: | :--- | :--- | :---: | :--- | :---: |
-| **TSK-101** | US-SEC-01 | Diseñar entidades `Usuario`, `Rol`, `Permiso`, `UsuarioRol` y `RolPermiso` | `Entities` | 4 h | Daniela Vides | **Closed** |
-| **TSK-102** | US-SEC-01 | Configurar relaciones y llaves compuestas en `AppDbContext` | `DataAccess` | 3 h | Daniela Vides | **Closed** |
-| **TSK-103** | US-SEC-01 | Crear migración inicial de seguridad `AddSecurityEntities` | `DataAccess` | 2 h | Daniela Vides | **Closed** |
-| **TSK-104** | US-SEC-01 | Implementar `AuthService` con algoritmo SHA-256 | `Business` | 6 h | Daniela Vides | **Closed** |
-| **TSK-105** | US-SEC-01 | Configurar cookie authentication middleware en `Program.cs` | `WebMVC` | 3 h | Daniela Vides | **Closed** |
-| **TSK-106** | US-SEC-01 | Construir vistas Razor para `Login.cshtml` y `Register.cshtml` | `WebMVC` | 5 h | Daniela Vides | **Closed** |
-| **TSK-107** | US-SEC-01 | Crear seeder `DbInitializer` con 5 roles, 18 permisos y Admin | `DataAccess` | 4 h | Daniela Vides | **Closed** |
-| **TSK-108** | US-SEC-02 | Implementar `AdminController` con listado y CRUD de usuarios | `WebMVC` | 6 h | Daniela Vides | **Closed** |
-| **TSK-109** | US-SEC-02 | Diseñar vista interactiva `Usuarios.cshtml` con DataTables | `WebMVC` | 4 h | Daniela Vides | **Closed** |
-| **TSK-110** | US-SEC-02 | Crear acciones de asignación y remoción dinámica de roles | `WebMVC` | 4 h | Daniela Vides | **Closed** |
-| **TSK-111** | US-SEC-03 | Implementar `RolesController` y vista `AsignarPermisos.cshtml` | `WebMVC` | 5 h | Daniela Vides | **Closed** |
+| **TSK-101** | US-SEC-01 | Diseñar entidades `Usuario`, `Rol`, `Permiso`, `UsuarioRol` y `RolPermiso` | `Entities` | 4 h | Camila Calderón | **Closed** |
+| **TSK-102** | US-SEC-01 | Configurar relaciones y llaves compuestas en `AppDbContext` | `DataAccess` | 3 h | Camila Calderón | **Closed** |
+| **TSK-103** | US-SEC-01 | Crear migración inicial de seguridad `AddSecurityEntities` | `DataAccess` | 2 h | Camila Calderón | **Closed** |
+| **TSK-104** | US-SEC-01 | Implementar `AuthService` con algoritmo SHA-256 | `Business` | 6 h | Camila Calderón | **Closed** |
+| **TSK-105** | US-SEC-01 | Configurar cookie authentication middleware en `Program.cs` | `WebMVC` | 3 h | Camila Calderón | **Closed** |
+| **TSK-106** | US-SEC-01 | Construir vistas Razor para `Login.cshtml` y `Register.cshtml` | `WebMVC` | 5 h | Camila Calderón | **Closed** |
+| **TSK-107** | US-SEC-01 | Crear seeder `DbInitializer` con 5 roles, 18 permisos y Admin | `DataAccess` | 4 h | Camila Calderón | **Closed** |
+| **TSK-108** | US-SEC-02 | Implementar `AdminController` con listado y CRUD de usuarios | `WebMVC` | 6 h | Camila Calderón | **Closed** |
+| **TSK-109** | US-SEC-02 | Diseñar vista interactiva `Usuarios.cshtml` con DataTables | `WebMVC` | 4 h | Camila Calderón | **Closed** |
+| **TSK-110** | US-SEC-02 | Crear acciones de asignación y remoción dinámica de roles | `WebMVC` | 4 h | Camila Calderón | **Closed** |
+| **TSK-111** | US-SEC-03 | Implementar `RolesController` y vista `AsignarPermisos.cshtml` | `WebMVC` | 5 h | Camila Calderón | **Closed** |
 | **TSK-112** | US-HAB-01 | Modelar entidades `Habitacion`, `TipoHabitacion` y `Comodidad` | `Entities` | 4 h | Ariel Ascencio | **Closed** |
 | **TSK-113** | US-HAB-01 | Implementar `HabitacionService` y método `ObtenerTodasAsync()` | `Business` | 4 h | Ariel Ascencio | **Closed** |
 | **TSK-114** | US-HAB-01 | Crear controlador `HabitacionesController` y vista `Buscar.cshtml` | `WebMVC` | 5 h | Ariel Ascencio | **Closed** |
