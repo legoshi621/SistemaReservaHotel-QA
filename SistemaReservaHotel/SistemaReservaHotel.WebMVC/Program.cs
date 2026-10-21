@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SistemaReservaHotel.Business.Interfaces;
 using SistemaReservaHotel.Business.Services;
 using SistemaReservaHotel.DataAccess;
+using SistemaReservaHotel.DataAccess.Repositories;
 using SistemaReservaHotel.DataAccess.Seed;
 using SistemaReservaHotel.DataAccess.UnitOfWork;
 
@@ -15,9 +16,12 @@ builder.Services.AddControllersWithViews();
 // ═══ BASE DE DATOS Y MIGRACIONES ═════════════════════════════════
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString, b =>
-        b.MigrationsAssembly("SistemaReservaHotel.DataAccess"))); // <--- SOLUCIÓN AL ERROR DE MIGRACIONES
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(connectionString, b =>
+            b.MigrationsAssembly("SistemaReservaHotel.DataAccess"))); // <--- SOLUCIÓN AL ERROR DE MIGRACIONES
+}
 
 // ═══ UNIT OF WORK Y REPOSITORIOS ═══════════════════════════════
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -28,9 +32,11 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IRolService, RolService>();
 
 // 🔹 REGISTRO DE SERVICIOS NUEVOS
+builder.Services.AddScoped<IReservaRepository, ReservaRepository>();
+builder.Services.AddScoped<IHabitacionRepository, HabitacionRepository>();
 builder.Services.AddScoped<IHabitacionService, HabitacionService>();
-// builder.Services.AddScoped<IReservaService, ReservaService>();
-// builder.Services.AddScoped<IDisponibilidadService, DisponibilidadService>();
+builder.Services.AddScoped<IReservaService, ReservaService>();
+builder.Services.AddScoped<IDisponibilidadService, DisponibilidadService>();
 
 // ═══ AUTENTICACIÓN CON COOKIES ═══════════════════════════════════
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -92,3 +98,5 @@ using (var scope = app.Services.CreateScope())
     }
 }
 app.Run();
+
+public partial class Program { }
