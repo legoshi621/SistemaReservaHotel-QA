@@ -1,11 +1,11 @@
-﻿using SistemaReservaHotel.Entities;
+using SistemaReservaHotel.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SistemaReservaHotel.DataAccess.Repositories
 {
-    public class HabitacionRepository
+    public class HabitacionRepository : IHabitacionRepository
     {
         private static List<Habitacion> habitaciones = new List<Habitacion>
         {
@@ -53,18 +53,18 @@ namespace SistemaReservaHotel.DataAccess.Repositories
             }
         };
 
-        public Task<List<Habitacion>> ObtenerTodasAsync()
+        public virtual Task<List<Habitacion>> ObtenerTodasAsync()
         {
             return Task.FromResult(habitaciones);
         }
 
-        public Task<Habitacion?> ObtenerPorIdAsync(int id)
+        public virtual Task<Habitacion?> ObtenerPorIdAsync(int id)
         {
             var habitacion = habitaciones.FirstOrDefault(h => h.Id == id);
             return Task.FromResult(habitacion);
         }
 
-        public Task<List<Habitacion>> ObtenerDisponiblesAsync()
+        public virtual Task<List<Habitacion>> ObtenerDisponiblesAsync()
         {
             var disponibles = habitaciones.Where(h => h.Activa && h.Estado == "Disponible").ToList();
             return Task.FromResult(disponibles);

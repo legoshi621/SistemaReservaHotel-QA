@@ -1,4 +1,4 @@
-﻿using SistemaReservaHotel.Business.Interfaces;
+using SistemaReservaHotel.Business.Interfaces;
 using SistemaReservaHotel.DataAccess.Repositories;
 using SistemaReservaHotel.Entities;
 
@@ -6,9 +6,9 @@ namespace SistemaReservaHotel.Business.Services
 {
     public class ReservaService : IReservaService
     {
-        private readonly ReservaRepository _reservaRepository;
+        private readonly IReservaRepository _reservaRepository;
 
-        public ReservaService(ReservaRepository reservaRepository)
+        public ReservaService(IReservaRepository reservaRepository)
         {
             _reservaRepository = reservaRepository;
         }
