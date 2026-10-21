@@ -11,7 +11,7 @@
 **Clase / Métodos Bajo Prueba:** `SistemaReservaHotel.Business.Services.ReservaService` (`ReservarAsync`, `ActualizarAsync`, `EliminarAsync`, `ValidarDisponibilidadAsync`)  
 **Dependencia Aislada:** `IReservaRepository` mediante dobles de prueba (*Moq*)  
 **Fecha de Ejecución y Validación:** 20 de Octubre de 2026  
-**Resultado Global:** **100% SUPERADO (5 de 5 pruebas aprobadas — 0 fallidas — 0 omitidas)**  
+**Resultado Global:** **Estado: Aprobado — 5 de 5 Pruebas Unitarias Passed (0 Failed — 0 Skipped)**  
 
 ---
 
@@ -40,11 +40,11 @@ dotnet test SistemaReservaHotel0/SistemaReservaHotel/SistemaReservaHotel.UnitTes
 
 | # | Método de Prueba | Condición Probada | Entrada Simulada | Salida Esperada | Resultado Real | Estado |
 |:---:|:---|:---|:---|:---:|:---:|:---:|
-| **1** | `ReservarAsync_CreaReservaYRetornaEntidad` | Creación de reserva con ID generado | `Cliente: "Ana Torres"`, `Hab: 1`, `$150` | `Reserva.Id == 10`, `Nombre == "Ana Torres"` | `Id == 10`, `Persistida` | 🟢 **Passed** |
-| **2** | `ActualizarAsync_LlamaMetodoActualizarDelRepositorio` | Modificación y cancelación de reserva | `Reserva Id: 5`, `Estado: "Cancelada"` | Llamada única a `ActualizarAsync` en repositorio | `Verify Times.Once` | 🟢 **Passed** |
-| **3** | `EliminarAsync_LlamaMetodoEliminarDelRepositorio` | Eliminación segura de reserva por clave primaria | `Reserva Id: 7` | Llamada única a `EliminarAsync(7)` en repositorio | `Verify Times.Once` | 🟢 **Passed** |
-| **4** | `ValidarDisponibilidadAsync_CuandoEstaDisponible_RetornaTrue` | Verificación de fechas sin conflicto ni sobreventa | `HabitacionId: 1`, `Hoy + 2d` a `Hoy + 5d` | `True` (Habitación libre para reservar) | `True` | 🟢 **Passed** |
-| **5** | `ValidarDisponibilidadAsync_CuandoNoEstaDisponible_RetornaFalse` | Detección de colisión / solapamiento de fechas | `HabitacionId: 1`, fechas en colisión | `False` (Bloqueo preventivo de sobreventa) | `False` | 🟢 **Passed** |
+| **1** | `Reservar_DatosValidos_CreaReserva` | Creación de reserva con ID generado | `Cliente: "Ana Torres"`, `Hab: 1`, `$150` | `Reserva.Id == 10`, `Nombre == "Ana Torres"` | `Id == 10`, `Persistida` | ✅ **Passed** |
+| **2** | `Actualizar_EstadoModificado_Exitoso` | Modificación y cancelación de reserva | `Reserva Id: 5`, `Estado: "Cancelada"` | Llamada única a `ActualizarAsync` en repositorio | `Verify Times.Once` | ✅ **Passed** |
+| **3** | `Eliminar_PorId_Exitoso` | Eliminación segura de reserva por clave primaria | `Reserva Id: 7` | Llamada única a `EliminarAsync(7)` en repositorio | `Verify Times.Once` | ✅ **Passed** |
+| **4** | `Disponibilidad_SinConflicto_RetornaTrue` | Verificación de fechas sin conflicto ni sobreventa | `HabitacionId: 1`, `Hoy + 2d` a `Hoy + 5d` | `True` (Habitación libre para reservar) | `True` | ✅ **Passed** |
+| **5** | `Disponibilidad_ConConflicto_RetornaFalse` | Detección de colisión / solapamiento de fechas | `HabitacionId: 1`, fechas en colisión | `False` (Bloqueo preventivo de sobreventa) | `False` | ✅ **Passed** |
 
 ---
 
@@ -59,11 +59,11 @@ C:\Users\CLIENTE\Downloads\ReservaHotel1\ReservaHotel1\SistemaReservaHotel0\Sist
 [xUnit.net 00:00:00.35]   Discovered:  SistemaReservaHotel.UnitTests
 [xUnit.net 00:00:00.36]   Starting:    SistemaReservaHotel.UnitTests
 [xUnit.net 00:00:01.15]   Finished:    SistemaReservaHotel.UnitTests
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ReservarAsync_CreaReservaYRetornaEntidad [657 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.EliminarAsync_LlamaMetodoEliminarDelRepositorio [5 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ActualizarAsync_LlamaMetodoActualizarDelRepositorio [3 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ValidarDisponibilidadAsync_CuandoNoEstaDisponible_RetornaFalse [8 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ValidarDisponibilidadAsync_CuandoEstaDisponible_RetornaTrue [6 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.Reservar_DatosValidos_CreaReserva [657 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.Eliminar_PorId_Exitoso [5 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.Actualizar_EstadoModificado_Exitoso [3 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.Disponibilidad_ConConflicto_RetornaFalse [8 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.Disponibilidad_SinConflicto_RetornaTrue [6 ms]
 
 La serie de pruebas se ejecutó correctamente.
 Pruebas totales: 5

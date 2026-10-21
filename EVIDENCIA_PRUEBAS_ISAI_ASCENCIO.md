@@ -10,7 +10,7 @@
 **Archivo Evaluado:** `SistemaReservaHotel.UnitTests/ValidadorFechasTests.cs`  
 **Clase / Método Bajo Prueba:** `SistemaReservaHotel.Business.Helpers.ValidadorFechas.FechasValidas(DateTime entrada, DateTime salida)`  
 **Fecha de Ejecución y Validación:** 20 de Octubre de 2026  
-**Resultado Global:** **100% SUPERADO (6 de 6 pruebas aprobadas — 0 fallidas — 0 omitidas)**  
+**Resultado Global:** **Estado: Aprobado — 6 de 6 Pruebas Unitarias Passed (0 Failed — 0 Skipped)**  
 
 ---
 
@@ -39,12 +39,12 @@ dotnet test SistemaReservaHotel0/SistemaReservaHotel/SistemaReservaHotel.UnitTes
 
 | # | Método de Prueba | Condición Probada | Entrada Simula | Salida Esperada | Resultado Real | Estado |
 |:---:|:---|:---|:---|:---:|:---:|:---:|
-| **1** | `FechasValidas_EntradaFuturaYMenorQueSalida_RetornaTrue` | Rango normal de fechas futuras válidas | `Hoy + 2d` a `Hoy + 5d` | `True` | `True` | 🟢 **Passed** |
-| **2** | `FechasValidas_EntradaHoyYSalidaManana_RetornaTrue` | Check-in inmediato hoy con estancia de 1 noche | `Hoy` a `Hoy + 1d` | `True` | `True` | 🟢 **Passed** |
-| **3** | `FechasValidas_EntradaMayorQueSalida_RetornaFalse` | Fecha de entrada posterior a la de salida (invertidas) | `Hoy + 5d` a `Hoy + 2d` | `False` | `False` | 🟢 **Passed** |
-| **4** | `FechasValidas_EntradaIgualASalida_RetornaFalse` | Check-in y check-out el mismo día (estancia 0 noches) | `Hoy + 2d` a `Hoy + 2d` | `False` | `False` | 🟢 **Passed** |
-| **5** | `FechasValidas_EntradaEnElPasado_RetornaFalse` | Check-in en fecha pasada con salida futura | `Hoy - 1d` a `Hoy + 2d` | `False` | `False` | 🟢 **Passed** |
-| **6** | `FechasValidas_EntradaYSalidaEnElPasado_RetornaFalse` | Ambas fechas en el pasado (rango caducado) | `Hoy - 5d` a `Hoy - 2d` | `False` | `False` | 🟢 **Passed** |
+| **1** | `FechasValidas_EntradaFuturaYMenorQueSalida_RetornaTrue` | Rango normal de fechas futuras válidas | `Hoy + 2d` a `Hoy + 5d` | `True` | `True` | ✅ **Passed** |
+| **2** | `FechasValidas_EntradaHoyYSalidaManana_RetornaTrue` | Check-in inmediato hoy con estancia de 1 noche | `Hoy` a `Hoy + 1d` | `True` | `True` | ✅ **Passed** |
+| **3** | `FechasValidas_EntradaMayorQueSalida_RetornaFalse` | Fecha de entrada posterior a la de salida (invertidas) | `Hoy + 5d` a `Hoy + 2d` | `False` | `False` | ✅ **Passed** |
+| **4** | `FechasValidas_EntradaIgualASalida_RetornaFalse` | Check-in y check-out el mismo día (estancia 0 noches) | `Hoy + 2d` a `Hoy + 2d` | `False` | `False` | ✅ **Passed** |
+| **5** | `FechasValidas_EntradaEnElPasado_RetornaFalse` | Check-in en fecha pasada con salida futura | `Hoy - 1d` a `Hoy + 2d` | `False` | `False` | ✅ **Passed** |
+| **6** | `FechasValidas_EntradaYSalidaEnElPasado_RetornaFalse` | Ambas fechas en el pasado (rango caducado) | `Hoy - 5d` a `Hoy - 2d` | `False` | `False` | ✅ **Passed** |
 
 ---
 

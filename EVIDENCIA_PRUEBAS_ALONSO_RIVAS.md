@@ -11,14 +11,14 @@
 **Clase / Métodos Bajo Prueba:** `SistemaReservaHotel.Business.Services.ReservaService` (`ObtenerPorDiaAsync`, `ObtenerTodasAsync`, `ObtenerPorIdAsync`)  
 **Dependencia Aislada:** `IReservaRepository` mediante dobles de prueba (*Moq*)  
 **Fecha de Ejecución y Validación:** 20 de Octubre de 2026  
-**Resultado Global:** **100% SUPERADO (4 de 4 pruebas aprobadas — 0 fallidas — 0 omitidas)**  
+**Resultado Global:** **Estado: Aprobado — 4 de 4 Pruebas Unitarias Passed (0 Failed — 0 Skipped)**  
 
 ---
 
 ## 1. Comando Oficial Ejecutado
 
 ```powershell
-dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj --filter "FullyQualifiedName~ObtenerPorDiaAsync|FullyQualifiedName~ObtenerTodasAsync|FullyQualifiedName~ObtenerPorIdAsync" --logger "console;verbosity=detailed"
+dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj --filter "FullyQualifiedName~ObtenerPorDia_FechaValida|FullyQualifiedName~ObtenerTodas_ListaCompleta|FullyQualifiedName~ObtenerPorId" --logger "console;verbosity=detailed"
 ```
 
 ---
@@ -40,10 +40,10 @@ dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHote
 
 | # | Método de Prueba | Condición Probada | Entrada Simulada | Salida Esperada | Resultado Real | Estado |
 |:---:|:---|:---|:---|:---:|:---:|:---:|
-| **1** | `ObtenerPorDiaAsync_RetornaReservasDelDiaIndicado` | Recuperación de reservas activas para la fecha especificada (US-14) | `fecha = DateTime.Today`, 2 reservas asignadas a hoy | Lista con 2 reservas (`Count == 2`) | Lista con 2 reservas (`Verify Times.Once`) | 🟢 **Passed** |
-| **2** | `ObtenerTodasAsync_RetornaListaDeReservas` | Recuperación del catálogo general completo de reservas | Colección simulada de 2 reservas ("Juan Perez", "Maria Gomez") | Lista de 2 elementos, primer cliente "Juan Perez" | 2 elementos recuperados íntegros | 🟢 **Passed** |
-| **3** | `ObtenerPorIdAsync_IdExistente_RetornaReserva` | Consulta individual por clave primaria existente | `Id = 1`, cliente "Carlos Lopez" | Objeto `Reserva` con `Id == 1` y cliente coincidente | Entidad retornada con datos exactos | 🟢 **Passed** |
-| **4** | `ObtenerPorIdAsync_IdInexistente_RetornaNull` | Manejo seguro y resiliente ante ID inexistente en repositorio | `Id = 999` (registro inexistente) | `null` sin disparar excepciones no controladas | `null` verificado de forma controlada | 🟢 **Passed** |
+| **1** | `ObtenerPorDia_FechaValida_RetornaReservas` | Recuperación de reservas activas para la fecha especificada (US-14) | `fecha = DateTime.Today`, 2 reservas asignadas a hoy | Lista con 2 reservas (`Count == 2`) | Lista con 2 reservas (`Verify Times.Once`) | ✅ **Passed** |
+| **2** | `ObtenerTodas_ListaCompleta_RetornaReservas` | Recuperación del catálogo general completo de reservas | Colección simulada de 2 reservas ("Juan Perez", "Maria Gomez") | Lista de 2 elementos, primer cliente "Juan Perez" | 2 elementos recuperados íntegros | ✅ **Passed** |
+| **3** | `ObtenerPorId_IdExistente_RetornaReserva` | Consulta individual por clave primaria existente | `Id = 1`, cliente "Carlos Lopez" | Objeto `Reserva` con `Id == 1` y cliente coincidente | Entidad retornada con datos exactos | ✅ **Passed** |
+| **4** | `ObtenerPorId_IdInexistente_RetornaNull` | Manejo seguro ante ID inexistente en repositorio | `Id = 999` (registro inexistente) | `null` sin excepciones no controladas | `null` verificado de forma controlada | ✅ **Passed** |
 
 ---
 
@@ -58,10 +58,10 @@ C:\Users\carlo\Desktop\ReservasHotel\SistemaReservaHotel-QA\SistemaReservaHotel\
 [xUnit.net 00:00:01.27]   Discovered:  SistemaReservaHotel.UnitTests
 [xUnit.net 00:00:01.28]   Starting:    SistemaReservaHotel.UnitTests
 [xUnit.net 00:00:02.73]   Finished:    SistemaReservaHotel.UnitTests
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorIdAsync_IdInexistente_RetornaNull [1 s]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorIdAsync_IdExistente_RetornaReserva [8 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorDiaAsync_RetornaReservasDelDiaIndicado [12 ms]
-  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerTodasAsync_RetornaListaDeReservas [2 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorId_IdInexistente_RetornaNull [1 s]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorId_IdExistente_RetornaReserva [8 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerPorDia_FechaValida_RetornaReservas [12 ms]
+  Correctas SistemaReservaHotel.UnitTests.ReservaPublicaServiceTests.ObtenerTodas_ListaCompleta_RetornaReservas [2 ms]
 
 La serie de pruebas se ejecutó correctamente.
 Pruebas totales: 4

@@ -23,7 +23,7 @@ namespace SistemaReservaHotel.UnitTests
         #region Carlos Alonso Miranda Rivas - US-14 (#1034) - Consultas y Lectura
 
         [Fact]
-        public async Task ObtenerPorDiaAsync_RetornaReservasDelDiaIndicado()
+        public async Task ObtenerPorDia_FechaValida_RetornaReservas()
         {
             // Arrange
             var fecha = DateTime.Today;
@@ -45,7 +45,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ObtenerTodasAsync_RetornaListaDeReservas()
+        public async Task ObtenerTodas_ListaCompleta_RetornaReservas()
         {
             // Arrange
             var listaEsperada = new List<Reserva>
@@ -67,7 +67,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ObtenerPorIdAsync_IdExistente_RetornaReserva()
+        public async Task ObtenerPorId_IdExistente_RetornaReserva()
         {
             // Arrange
             var reservaEsperada = new Reserva { Id = 1, NombreCliente = "Carlos Lopez" };
@@ -84,7 +84,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ObtenerPorIdAsync_IdInexistente_RetornaNull()
+        public async Task ObtenerPorId_IdInexistente_RetornaNull()
         {
             // Arrange
             _reservaRepoMock.Setup(r => r.ObtenerPorIdAsync(999)).ReturnsAsync((Reserva?)null);
@@ -102,7 +102,7 @@ namespace SistemaReservaHotel.UnitTests
         #region Camila Antonia Calderón Cortez - US-SEC-01 (#1043) - Mutación y Validación de Colisión
 
         [Fact]
-        public async Task ReservarAsync_CreaReservaYRetornaEntidad()
+        public async Task Reservar_DatosValidos_CreaReserva()
         {
             // Arrange
             var nuevaReserva = new Reserva
@@ -139,7 +139,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ActualizarAsync_LlamaMetodoActualizarDelRepositorio()
+        public async Task Actualizar_EstadoModificado_Exitoso()
         {
             // Arrange
             var reserva = new Reserva
@@ -159,7 +159,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task EliminarAsync_LlamaMetodoEliminarDelRepositorio()
+        public async Task Eliminar_PorId_Exitoso()
         {
             // Arrange
             int reservaId = 7;
@@ -173,7 +173,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ValidarDisponibilidadAsync_CuandoEstaDisponible_RetornaTrue()
+        public async Task Disponibilidad_SinConflicto_RetornaTrue()
         {
             // Arrange
             int habitacionId = 1;
@@ -191,7 +191,7 @@ namespace SistemaReservaHotel.UnitTests
         }
 
         [Fact]
-        public async Task ValidarDisponibilidadAsync_CuandoNoEstaDisponible_RetornaFalse()
+        public async Task Disponibilidad_ConConflicto_RetornaFalse()
         {
             // Arrange
             int habitacionId = 1;
