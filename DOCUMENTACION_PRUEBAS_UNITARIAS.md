@@ -1,7 +1,7 @@
 # Documentación Oficial de Pruebas Unitarias — Sistema de Reserva Hotel
 
 **Proyecto:** Sistema de Reserva Hotel  
-**Fecha de Ejecución:** Octubre 2026  
+**Fecha de Ejecución y Validación:** 20 de Octubre de 2026 (Caso 4.3 verificado y completo)  
 **Framework Tecnológico:** .NET 10.0 (`net10.0`) | xUnit 2.9.3 | Moq 4.21.0 | Coverlet 6.0.4  
 **Proyecto de Pruebas:** `SistemaReservaHotel0/SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj`  
 **Tasa de Aprobación Global:** **100% (21 de 21 pruebas superadas — 0 fallidas — 0 omitidas)**  
