@@ -1,83 +1,169 @@
-# Reporte Individual de Evidencias — Joselin Esmeralda Herrera Flores (`Joselin Herrera`)
-
-**Proyecto:** Sistema de Reserva Hotel — QA  
-**Repositorio Azure DevOps:** `cc25003/SistemaReservaHotel-QA`  
-**Rama:** `feature/pruebas-qa` / `main`  
-**Integrante:** Joselin Esmeralda Herrera Flores (`Joselin Herrera`)  
-**Rol en QA:** Analista de Inventario (Disponibilidad de Habitaciones por Fechas y Estado)  
-**Historia de Usuario (PBI):** **US-15 (#1037)** — *Disponibilidad de habitaciones por rango de fechas y estado de inventario*  
-**Casos de Prueba Azure Test Plan:** **TC-03 (#1048)** y **TC-04 (#1049)** (Test Plan #1054 / Suite #1055)  
-**Archivo Evaluado:** `SistemaReservaHotel.UnitTests/DisponibilidadServiceTests.cs`  
-**Clase / Métodos Bajo Prueba:** `SistemaReservaHotel.Business.Services.DisponibilidadService` (`ObtenerDisponiblesAsync`)  
-**Dependencias Aisladas:** `IHabitacionRepository` e `IReservaRepository` mediante dobles de prueba (*Moq*)  
-**Fecha de Ejecución y Validación:** 21 de Octubre de 2026  
-**Resultado Global:** **100% SUPERADO (6 de 6 pruebas aprobadas — 0 fallidas — 0 omitidas)**  
+# EVIDENCIA DE PRUEBAS — JOSELIN ESMERALDA HERRERA FLORES
+## Sistema de Reserva de Hotel · US-15 (#1037) · Catálogo y Disponibilidad
 
 ---
 
-## 1. Comando Oficial Ejecutado
+| Campo                 | Detalle                                                                                       |
+|-----------------------|-----------------------------------------------------------------------------------------------|
+| **Integrante**        | Joselin Esmeralda Herrera Flores                                                              |
+| **User Story**        | US-15 (#1037) — Catálogo y Disponibilidad                                                     |
+| **Fecha de ejecución**| 2026-10-22                                                                                    |
+| **Herramienta**       | `dotnet test` — xUnit 2.9.3, Moq 4.20.72, FluentAssertions 8.11.0                           |
+| **Framework**         | .NET 10.0 / net10.0                                                                           |
+| **Repositorio**       | SistemaReservaHotel-QA — rama `main`                                                         |
+| **Tipo de evidencia** | Ejecución real local (Pruebas Unitarias + Pruebas de API e Integración)                       |
 
+---
+
+## 1. RESUMEN EJECUTIVO
+
+| Categoría              | Ejecutadas | Pasadas | Fallidas | Tasa de Éxito |
+|------------------------|:----------:|:-------:|:--------:|:-------------:|
+| Pruebas Unitarias      | 6          | **6**   | 0        | **100 %**     |
+| Pruebas de Integración | 3          | **3**   | 0        | **100 %**     |
+| **TOTAL**              | **9**      | **9**   | **0**    | **100 %**     |
+
+---
+
+## 2. PRUEBAS UNITARIAS — `DisponibilidadServiceTests`
+
+**Proyecto:** `SistemaReservaHotel.UnitTests`  
+**Clase:** `SistemaReservaHotel.UnitTests.DisponibilidadServiceTests`  
+**Comando ejecutado:**
 ```powershell
-dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj --filter "FullyQualifiedName~DisponibilidadServiceTests" --logger "trx;LogFileName=joselin_herrera_results.trx" --verbosity normal
+dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj --filter "FullyQualifiedName~DisponibilidadServiceTests" --logger "console;verbosity=detailed"
 ```
 
----
+### Resultados de Ejecución
 
-## 2. Resumen de Ejecución Individual
+| ID    | Nombre del Test                                                                                     | Estado      | Duración |
+|-------|-----------------------------------------------------------------------------------------------------|:-----------:|:--------:|
+| UT-07 | `ObtenerDisponiblesAsync_SinReservas_RetornaTodasLasHabitacionesActivas`                           | ✅ PASS     | 4 ms     |
+| UT-08 | `ObtenerDisponiblesAsync_HabitacionInactiva_NoSeIncluyeEnDisponibles`                              | ✅ PASS     | 1 ms     |
+| UT-09 | `ObtenerDisponiblesAsync_ConReservaActivaEnConflicto_ExcluyeHabitacionOcupada`                     | ✅ PASS     | 4 ms     |
+| UT-10 | `ObtenerDisponiblesAsync_ConReservaCanceladaEnMismoRango_NoExcluyeHabitacion`                      | ✅ PASS     | 3 ms     |
+| UT-11 | `ObtenerDisponiblesAsync_ReservaFinalizaElMismoDiaDeEntrada_HabitacionDisponible`                  | ✅ PASS     | 2 ms     |
+| UT-12 | `ObtenerDisponiblesAsync_ReservaIniciaElMismoDiaDeSalida_HabitacionDisponible`                     | ✅ PASS     | 241 ms   |
 
-| Métrica | Valor |
-|:---|:---:|
-| Total de pruebas ejecutadas | **6** |
-| Pruebas superadas (Passed) | **6 (100%)** |
-| Pruebas fallidas (Failed) | **0 (0%)** |
-| Pruebas omitidas (Skipped) | **0 (0%)** |
-| Tiempo total de ejecución | **3.24 s** |
-| Framework de Pruebas | **xUnit 2.9.3 (.NET 8.0)** / **Moq 4.20.72** |
-
----
-
-## 3. Matriz de Casos de Prueba Unitarios Evaluados (AAA)
-
-| # | Método de Prueba | Condición Probada | Entrada Simulada | Salida Esperada | Resultado Real | Estado |
-|:---:|:---|:---|:---|:---:|:---:|:---:|
-| **1** | `ObtenerDisponiblesAsync_SinReservas_RetornaTodasLasHabitacionesActivas` | Hotel vacío sin reservas: 100% de disponibilidad para habitaciones activas (TC-03) | 2 habitaciones activas, 0 reservas, rango futuro (hoy+1 a hoy+4) | Lista con 2 habitaciones (`Count == 2`) | Lista con 2 habitaciones verificadas por `Id` | 🟢 **Passed** |
-| **2** | `ObtenerDisponiblesAsync_HabitacionInactiva_NoSeIncluyeEnDisponibles` | Habitaciones de baja/inactivas quedan excluidas del inventario disponible (TC-03) | 1 activa (Id=1) + 1 inactiva (Id=2, `Activa=false`), 0 reservas | Lista con 1 habitación (solo Id=1) | 1 habitación retornada, Id=1 exacto | 🟢 **Passed** |
-| **3** | `ObtenerDisponiblesAsync_ConReservaActivaEnConflicto_ExcluyeHabitacionOcupada` | Habitación con reserva activa en conflicto de fechas es excluida correctamente (TC-04) | 2 habitaciones activas, reserva activa en Id=1 (hoy+2 a hoy+5), consulta hoy+3 a hoy+6 | Lista con 1 habitación (solo Id=2) | Id=2 retornado, Id=1 excluido por conflicto | 🟢 **Passed** |
-| **4** | `ObtenerDisponiblesAsync_ConReservaCanceladaEnMismoRango_NoExcluyeHabitacion` | Reserva cancelada no bloquea disponibilidad; la habitación queda libre (TC-04) | 1 habitación activa (Id=1), reserva cancelada (`Estado="Cancelada"`) en mismo rango | Lista con 1 habitación (Id=1 disponible) | Id=1 retornado correctamente, cancelación no bloquea | 🟢 **Passed** |
-| **5** | `ObtenerDisponiblesAsync_ReservaFinalizaElMismoDiaDeEntrada_HabitacionDisponible` | Check-out coincide con check-in solicitado: la habitación queda disponible (TC-04) | 1 habitación, reserva activa (hoy+1 a hoy+4), consulta entrada=hoy+4 | Lista con 1 habitación (Id=1) | Habitación disponible, sin solapamiento de fechas | 🟢 **Passed** |
-| **6** | `ObtenerDisponiblesAsync_ReservaIniciaElMismoDiaDeSalida_HabitacionDisponible` | Check-out del huésped actual coincide con inicio de siguiente reserva: permitido (TC-04) | 1 habitación, reserva activa (hoy+5 a hoy+8), consulta salida=hoy+5 | Lista con 1 habitación (Id=1) | Habitación disponible, rangos contiguos sin conflicto | 🟢 **Passed** |
-
----
-
-## 4. Log Oficial de Consola (Evidencia de Ejecución)
-
+**Output real de consola:**
 ```text
-Serie de pruebas para /home/bayron/SistemaReservaHotel-QA/SistemaReservaHotel/SistemaReservaHotel.UnitTests/bin/Debug/net8.0/SistemaReservaHotel.UnitTests.dll (.NETCoreApp,Version=v8.0)
-Herramienta de línea de comandos de ejecución de pruebas de Microsoft(R), versión 17.8.0 (x64)
-Copyright (c) Microsoft Corporation. Todos los derechos reservados.
-Iniciando la ejecución de pruebas, espere...
-1 archivos de prueba en total coincidieron con el patrón especificado.
-[xUnit.net 00:00:00.01] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.31)
-[xUnit.net 00:00:00.27]   Discovering: SistemaReservaHotel.UnitTests
-[xUnit.net 00:00:00.39]   Discovered:  SistemaReservaHotel.UnitTests
-[xUnit.net 00:00:00.41]   Starting:    SistemaReservaHotel.UnitTests
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_ReservaIniciaElMismoDiaDeSalida_HabitacionDisponible [273 ms]
-[xUnit.net 00:00:01.02]   Finished:    SistemaReservaHotel.UnitTests
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_ConReservaCanceladaEnMismoRango_NoExcluyeHabitacion [5 ms]
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_ConReservaActivaEnConflicto_ExcluyeHabitacionOcupada [5 ms]
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_HabitacionInactiva_NoSeIncluyeEnDisponibles [2 ms]
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_SinReservas_RetornaTodasLasHabitacionesActivas [6 ms]
-  Correctas SistemaReservaHotel.UnitTests.DisponibilidadServiceTests.ObtenerDisponiblesAsync_ReservaFinalizaElMismoDiaDeEntrada_HabitacionDisponible [2 ms]
-
-Archivo de resultados: SistemaReservaHotel/SistemaReservaHotel.UnitTests/TestResults/joselin_herrera_results.trx
-La serie de pruebas se ejecutó correctamente.
-Pruebas totales: 6
-     Correcto: 6
- Tiempo total: 3.2378 Segundos
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_SinReservas_RetornaTodasLasHabitacionesActivas [4 ms]
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_HabitacionInactiva_NoSeIncluyeEnDisponibles [1 ms]
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_ConReservaActivaEnConflicto_ExcluyeHabitacionOcupada [4 ms]
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_ConReservaCanceladaEnMismoRango_NoExcluyeHabitacion [3 ms]
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_ReservaFinalizaElMismoDiaDeEntrada_HabitacionDisponible [2 ms]
+  Correctas  DisponibilidadServiceTests.ObtenerDisponiblesAsync_ReservaIniciaElMismoDiaDeSalida_HabitacionDisponible [241 ms]
 ```
+
+### Descripción de los Casos de Prueba
+
+#### UT-07 — Rango libre sin reservas existentes
+* **Objetivo:** Verificar que cuando no hay reservas, todas las habitaciones activas son retornadas.  
+* **Arrange:** 2 habitaciones activas (Id=1,2), lista de reservas vacía, rango hoy+1 a hoy+4.  
+* **Assert:** `disponibles.Count == 2`, contiene Id=1 e Id=2.  
+* **Resultado:** ✅ PASS — Se retornaron las 2 habitaciones activas correctamente.
+
+#### UT-08 — Habitación inactiva no se incluye
+* **Objetivo:** Verificar que habitaciones con `Activa = false` son excluidas.  
+* **Arrange:** Habitación 101 activa (Id=1) + Habitación 102 inactiva (Id=2), sin reservas.  
+* **Assert:** `disponibles.Count == 1`, Id=1.  
+* **Resultado:** ✅ PASS — Solo la habitación activa fue incluida.
+
+#### UT-09 — Habitación con reserva activa en conflicto es excluida
+* **Objetivo:** Verificar anticolisión: habitación con reserva activa solapada no se ofrece.  
+* **Arrange:** 2 habitaciones activas; reserva en Id=1 del día+2 al día+5 (Estado="Activa"); búsqueda día+3 a día+6.  
+* **Assert:** `disponibles.Count == 1`, Id=2.  
+* **Resultado:** ✅ PASS — Id=1 excluida por colisión; Id=2 disponible.
+
+#### UT-10 — Reserva cancelada no bloquea la habitación
+* **Objetivo:** Verificar que `Estado = "Cancelada"` no genera conflicto.  
+* **Arrange:** 1 habitación activa (Id=1); reserva cancelada sobre el mismo rango.  
+* **Assert:** `disponibles.Count == 1`, Id=1.  
+* **Resultado:** ✅ PASS — La cancelación no bloquea la disponibilidad.
+
+#### UT-11 — Reserva que finaliza el mismo día de entrada es aceptada
+* **Objetivo:** Lógica de borde: reserva que termina el día que el cliente quiere entrar no genera colisión.  
+* **Arrange:** Reserva en Id=1 de día+1 a día+4; búsqueda desde día+4 a día+7.  
+* **Assert:** `disponibles.Count == 1`, Id=1.  
+* **Resultado:** ✅ PASS — Checkout en mismo día de checkin nuevo no genera conflicto.
+
+#### UT-12 — Reserva que inicia el mismo día de salida es aceptada
+* **Objetivo:** Lógica de borde inversa: futura reserva que inicia cuando el cliente ya se fue no bloquea.  
+* **Arrange:** Reserva en Id=1 de día+5 a día+8; búsqueda desde día+2 a día+5.  
+* **Assert:** `disponibles.Count == 1`, Id=1.  
+* **Resultado:** ✅ PASS — Inicio de reserva futura en día de checkout no bloquea.
 
 ---
 
-## 5. Declaración de Autonomía y Conformidad
+## 3. PRUEBAS DE INTEGRACIÓN — `DisponibilidadIntegrationTests`
 
-Este reporte certifica formalmente que las **6 pruebas unitarias asignadas a Joselin Esmeralda Herrera Flores** fueron ejecutadas y validadas con éxito de manera 100% aislada e independiente en `DisponibilidadServiceTests.cs`, verificando la disponibilidad de habitaciones por rango de fechas, exclusión de habitaciones inactivas, conflicto con reservas activas, liberación por cancelación y manejo de rangos contiguos (check-in/check-out en el mismo día) en la capa de negocio sin depender de base de datos externa ni de los otros 3 integrantes, satisfaciendo a cabalidad los criterios de aceptación para la historia **US-15 (#1037)** y los casos de prueba **TC-03 (#1048)** y **TC-04 (#1049)** en Azure DevOps.
+**Proyecto:** `SistemaReservaHotel.IntegrationTests`  
+**Clase:** `SistemaReservaHotel.IntegrationTests.DisponibilidadIntegrationTests`  
+**Infraestructura:** `CustomWebApplicationFactory` + EF Core InMemory + `Microsoft.AspNetCore.Mvc.Testing`  
+**Endpoint:** `GET /Disponibilidad?entrada={fecha}&salida={fecha}`  
+**Comando ejecutado:**
+```powershell
+dotnet test SistemaReservaHotel/SistemaReservaHotel.IntegrationTests/SistemaReservaHotel.IntegrationTests.csproj --filter "FullyQualifiedName~DisponibilidadIntegrationTests" --logger "console;verbosity=detailed"
+```
+
+### Resultados de Ejecución
+
+| ID        | API    | Nombre del Test                                                                       | Estado      | Duración |
+|-----------|--------|---------------------------------------------------------------------------------------|:-----------:|:--------:|
+| TC-INT-01 | API-06 | `GetDisponibilidad_EnRangoSinConflicto_Retorna200OkYHabitacionDisponible`            | ✅ PASS     | 6 s      |
+| TC-INT-02 | API-07 | `GetDisponibilidad_EnRangoConReservaActiva_ExcluyeHabitacionOcupada`                 | ✅ PASS     | 24 ms    |
+| TC-INT-03 | API-08 | `GetDisponibilidad_HabitacionInactiva_NoSeIncluyeEnDisponibles`                      | ✅ PASS     | 45 ms    |
+
+**Output real de consola:**
+```text
+  Correctas  DisponibilidadIntegrationTests.GetDisponibilidad_EnRangoSinConflicto_Retorna200OkYHabitacionDisponible [6 s]
+  Correctas  DisponibilidadIntegrationTests.GetDisponibilidad_HabitacionInactiva_NoSeIncluyeEnDisponibles [45 ms]
+  Correctas  DisponibilidadIntegrationTests.GetDisponibilidad_EnRangoConReservaActiva_ExcluyeHabitacionOcupada [24 ms]
+```
+
+### Descripción de los Casos de Prueba
+
+#### TC-INT-01 / API-06 — Rango libre → 200 OK + habitación disponible
+* **Objetivo:** El endpoint retorna 200 OK y la habitación semilla (Id=1, Activa=true) en rango libre.  
+* **Request:** `GET /Disponibilidad?entrada=<hoy+1>&salida=<hoy+3>`  
+* **Asserts:** `StatusCode == 200` ✅ · `disponibles != null` ✅ · `h.Id == 1 && h.Activa` ✅  
+* **Resultado:** ✅ PASS
+
+#### TC-INT-02 / API-07 — Reserva activa en conflicto → Id=1 excluida
+* **Objetivo:** Habitación con reserva solapada (semilla: día+10 a día+15) no aparece en resultado.  
+* **Request:** `GET /Disponibilidad?entrada=<hoy+11>&salida=<hoy+14>`  
+* **Asserts:** `StatusCode == 200` ✅ · `disponibles != null` ✅ · `!disponibles.Any(h => h.Id == 1)` ✅  
+* **Resultado:** ✅ PASS
+
+#### TC-INT-03 / API-08 — Habitación inactiva → no incluida
+* **Objetivo:** Habitación con `Activa = false` insertada en runtime no aparece en resultado.  
+* **Precondición:** Se inserta en BD en memoria habitación Id=99, Numero=999, `Activa=false`.  
+* **Request:** `GET /Disponibilidad?entrada=<hoy+1>&salida=<hoy+2>`  
+* **Asserts:** `StatusCode == 200` ✅ · `disponibles != null` ✅ · `!disponibles.Any(h => h.Id == 99)` ✅  
+* **Resultado:** ✅ PASS
+
+---
+
+## 4. COBERTURA DE RESPONSABILIDADES QA — US-15 (#1037)
+
+| Área           | ID       | Descripción                                                           | Estado      |
+|----------------|----------|-----------------------------------------------------------------------|:-----------:|
+| UAT            | TC-04    | Reporte de reservas por fechas en UI                                  | ✅ Asignado  |
+| UAT            | TC-05    | Control anticolisión en pantalla                                      | ✅ Asignado  |
+| API / Integr.  | API-06   | GET /Disponibilidad — rango libre, 200 OK + habitación disponible     | ✅ PASS      |
+| API / Integr.  | API-07   | GET /Disponibilidad — exclusión de habitaciones ocupadas              | ✅ PASS      |
+| API / Integr.  | API-08   | GET /Disponibilidad — filtrado de inactivas                           | ✅ PASS      |
+| Unitarias      | UT-07    | Sin reservas → todas las activas disponibles                          | ✅ PASS      |
+| Unitarias      | UT-08    | Habitación inactiva → excluida                                        | ✅ PASS      |
+| Unitarias      | UT-09    | Reserva activa en conflicto → excluida                                | ✅ PASS      |
+| Unitarias      | UT-10    | Reserva cancelada → no bloquea                                        | ✅ PASS      |
+| Unitarias      | UT-11    | Checkout = checkin nuevo → no conflicto                               | ✅ PASS      |
+| Unitarias      | UT-12    | Checkin = checkout anterior → no conflicto                            | ✅ PASS      |
+
+---
+
+## 5. CONCLUSIÓN Y DECLARACIÓN DE CUMPLIMIENTO
+
+> Todas las pruebas asignadas a **Joselin Esmeralda Herrera Flores** para la **US-15 (#1037)** fueron ejecutadas exitosamente en entorno local con `dotnet test`.  
+> **Tasa de aprobación: 100 % (9/9 pruebas: 6 Unitarias + 3 Integración).**  
+> La lógica de `DisponibilidadService` valida correctamente: rango libre, anticolisión, filtrado de inactivas, estados de reserva y casos borde de fechas límite sin dependencias externas.

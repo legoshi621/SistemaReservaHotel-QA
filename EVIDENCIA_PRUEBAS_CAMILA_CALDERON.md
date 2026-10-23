@@ -1,56 +1,98 @@
-# Reporte Individual de Evidencias Unitarias — Camila Antonia Calderón Cortez (`cami calderon`)
+# Reporte Individual de Evidencias de QA — Camila Antonia Calderón Cortez (`cami calderon`)
 
 **Proyecto:** Sistema de Reserva Hotel — QA  
 **Repositorio Azure DevOps:** `cc25003/SistemaReservaHotel-QA`  
 **Rama:** `main`  
 **Integrante:** Camila Antonia Calderón Cortez (`cami calderon` / `Camila Calderón`)  
-**Rol en QA:** Tester de Mutación y Persistencia (Operaciones CRUD y Colisión de Disponibilidad)  
+**Rol en QA:** Tester de Mutación, Persistencia Transaccional y Tarifas (Ciclo CRUD y Control de Colisión)  
 **Historia de Usuario (PBI):** **US-SEC-01 (#1043)** — *Ciclo de vida CRUD de reservas y control de colisión de disponibilidad*  
-**Casos de Prueba Azure Test Plan:** **TC-03 (#1048)** y **TC-06 (#1051)** (Test Plan #1054 / Suite #1055, con reporte de **Bug #1056**)  
-**Casos Unitarios:** **UT-17, UT-18, UT-19, UT-20 y UT-21**  
-**Archivo Evaluado:** `SistemaReservaHotel.UnitTests/ReservaPublicaServiceTests.cs`  
-**Clase / Métodos Bajo Prueba:** `SistemaReservaHotel.Business.Services.ReservaService` (`ReservarAsync`, `ActualizarAsync`, `EliminarAsync`, `ValidarDisponibilidadAsync`)  
-**Dependencia Aislada:** `IReservaRepository` mediante dobles de prueba (*Moq*)  
+**Test Plan Oficial:** Test Plan `#1054` (Suite `#1055`)  
 **Fecha de Ejecución y Validación:** 22 de Octubre de 2026  
-**Resultado Global:** **Estado: Aprobado — 5 de 5 Pruebas Unitarias Passed (100% — 0 Failed — 0 Skipped)**  
+**Resultado Global:** **100% de Pruebas Pasadas (9 de 9 Aprobadas: 5 Unitarias + 4 Integración / API)**  
 
 ---
 
-## 1. Comando Oficial Ejecutado
+## 1. Alcance Asignado (Los 3 Niveles de Prueba)
 
+| Nivel de Prueba | Identificadores | Componente / Endpoint | Estado |
+|:---|:---|:---|:---:|
+| **🌐 Aceptación (UAT)** | **TC-03 (#1048)**<br>**TC-06 (#1051)** | Creación de reserva en formulario web (`/Reserva/Crear`)<br>Validación de tarifa de temporada ($360 vs $120) | Documentado en Azure Test Plan<br>*(Con reporte de **Bug #1056** en Boards)* |
+| **🔌 API / Integración** | **API-13 a API-16** | `POST /Reserva/Crear`<br>`POST /Reserva/Cancelar` con TestHost / InMemory DB | ✅ **4 / 4 Passed (100%)** |
+| **⚙️ Pruebas Unitarias** | **UT-17 a UT-21** | `ReservaService` (Escritura y Colisión) con xUnit y Moq | ✅ **5 / 5 Passed (100%)** |
+
+---
+
+## 2. Ejecución Aislada de Pruebas de API e Integración
+
+### Comando Ejecutado
+```powershell
+dotnet test SistemaReservaHotel/SistemaReservaHotel.IntegrationTests/SistemaReservaHotel.IntegrationTests.csproj --filter "FullyQualifiedName~ReservaCrudIntegrationTests" --logger "console;verbosity=normal"
+```
+
+### Matriz de Casos de API / Integración Evaluados
+| # | Caso | Método de Prueba | Condición Probada | Payload Enviado | HTTP Esperado | Comprobación en BD InMemory | Estado |
+|:---:|:---:|:---|:---|:---|:---:|:---|:---:|
+| 1 | **API-13** | `PostCrearReserva_PersisteEntidadEnBaseDeDatosInMemory` | Creación y persistencia válida | Cliente: "Camila Calderon Test", Hab: 1, $450 | `200 OK` | Entidad existe en `AppDbContext.Reservas` con `Id > 0` y estado "Activa" | ✅ **Passed** |
+| 2 | **API-14** | `PostCancelarReserva_ActualizaEstadoEnBaseDeDatosInMemory` | Cancelación de reserva activa | DTO `{ Id: reservaCreada.Id }` | `200 OK` | Registro muta a estado "Cancelada" en `AppDbContext` | ✅ **Passed** |
+| 3 | **API-15** | `PostCancelarReserva_ConIdInexistente_Retorna404NotFound` | Cancelación con ID no registrado | DTO `{ Id: 88888 }` | `404 NotFound` | No altera ningún registro en `AppDbContext` | ✅ **Passed** |
+| 4 | **API-16** | `PostCrearReserva_EnMismasFechasQueReservaActiva_RechazaPorColision` | Intento de sobreventa en rango ocupado | Fechas en colisión (Día +11 a +14) | `400 BadRequest` | Bloqueo preventivo de sobreventa; colisión no insertada en BD | ✅ **Passed** |
+
+### Resumen de Pruebas de Integración
+* **Total:** 4 | **Pasadas:** 4 (100%) | **Fallidas:** 0 | **Omitidas:** 0 | **Tiempo:** ~4.22 s
+
+---
+
+## 3. Ejecución Aislada de Pruebas Unitarias
+
+### Comando Ejecutado
 ```powershell
 dotnet test SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj --filter "FullyQualifiedName~ReservaPublicaServiceTests.Reservar_DatosValidos_CreaReserva | FullyQualifiedName~ReservaPublicaServiceTests.Actualizar_EstadoModificado_Exitoso | FullyQualifiedName~ReservaPublicaServiceTests.Eliminar_PorId_Exitoso | FullyQualifiedName~ReservaPublicaServiceTests.Disponibilidad_SinConflicto_RetornaTrue | FullyQualifiedName~ReservaPublicaServiceTests.Disponibilidad_ConConflicto_RetornaFalse" --logger "console;verbosity=normal"
 ```
 
----
+### Matriz de Casos Unitarios Evaluados (Patrón AAA con Moq)
+| # | Caso | Método de Prueba | Condición Probada | Entrada Simulada | Salida Esperada | Resultado Real | Estado |
+|:---:|:---:|:---|:---|:---|:---:|:---:|:---:|
+| 1 | **UT-17** | `Reservar_DatosValidos_CreaReserva` | Creación de reserva con ID generado | `Cliente: "Ana Torres"`, `Hab: 1`, `$150` | `Reserva.Id == 10`, `Nombre == "Ana Torres"` | `Verify Times.Once` | ✅ **Passed** |
+| 2 | **UT-18** | `Actualizar_EstadoModificado_Exitoso` | Modificación y cancelación de reserva | `Reserva Id: 5`, `Estado: "Cancelada"` | Llamada única a `ActualizarAsync` en repositorio | `Verify Times.Once` | ✅ **Passed** |
+| 3 | **UT-19** | `Eliminar_PorId_Exitoso` | Eliminación segura de reserva por clave primaria | `Reserva Id: 7` | Llamada única a `EliminarAsync(7)` en repositorio | `Verify Times.Once` | ✅ **Passed** |
+| 4 | **UT-20** | `Disponibilidad_SinConflicto_RetornaTrue` | Verificación de fechas sin conflicto ni sobreventa | `HabitacionId: 1`, `Hoy + 2d` a `Hoy + 5d` | `True` (Habitación libre para reservar) | `Verify Times.Once` | ✅ **Passed** |
+| 5 | **UT-21** | `Disponibilidad_ConConflicto_RetornaFalse` | Detección de colisión / solapamiento de fechas | `HabitacionId: 1`, fechas en colisión | `False` (Bloqueo preventivo de sobreventa) | `Verify Times.Once` | ✅ **Passed** |
 
-## 2. Resumen de Ejecución Individual
-
-| Métrica | Valor |
-|:---|:---:|
-| Total de pruebas ejecutadas | **5** |
-| Pruebas superadas (Passed) | **5 (100%)** |
-| Pruebas fallidas (Failed) | **0 (0%)** |
-| Pruebas omitidas (Skipped) | **0 (0%)** |
-| Tiempo total de ejecución | **1.38 s** |
-| Framework de Pruebas | **xUnit 2.9.3 (.NET 10.0)** / **Moq 4.20.72** |
-
----
-
-## 3. Matriz de Casos de Prueba Unitarios Evaluados (AAA)
-
-| Caso | Método de Prueba | Condición Probada | Entrada Simulada | Salida Esperada | Resultado Real | Estado |
-|:---:|:---|:---|:---|:---:|:---:|:---:|
-| **UT-17** | `Reservar_DatosValidos_CreaReserva` | Creación de reserva con ID generado | `Cliente: "Ana Torres"`, `Hab: 1`, `$150` | `Reserva.Id == 10`, `Nombre == "Ana Torres"` | `Id == 10`, `Persistida` | ✅ **Passed** |
-| **UT-18** | `Actualizar_EstadoModificado_Exitoso` | Modificación y cancelación de reserva | `Reserva Id: 5`, `Estado: "Cancelada"` | Llamada única a `ActualizarAsync` en repositorio | `Verify Times.Once` | ✅ **Passed** |
-| **UT-19** | `Eliminar_PorId_Exitoso` | Eliminación segura de reserva por clave primaria | `Reserva Id: 7` | Llamada única a `EliminarAsync(7)` en repositorio | `Verify Times.Once` | ✅ **Passed** |
-| **UT-20** | `Disponibilidad_SinConflicto_RetornaTrue` | Verificación de fechas sin conflicto ni sobreventa | `HabitacionId: 1`, `Hoy + 2d` a `Hoy + 5d` | `True` (Habitación libre para reservar) | `True` | ✅ **Passed** |
-| **UT-21** | `Disponibilidad_ConConflicto_RetornaFalse` | Detección de colisión / solapamiento de fechas | `HabitacionId: 1`, fechas en colisión | `False` (Bloqueo preventivo de sobreventa) | `False` | ✅ **Passed** |
+### Resumen de Pruebas Unitarias
+* **Total:** 5 | **Pasadas:** 5 (100%) | **Fallidas:** 0 | **Omitidas:** 0 | **Tiempo:** ~1.38 s
 
 ---
 
-## 4. Log Oficial de Consola (Evidencia de Ejecución)
+## 4. Log Oficial de Consola (Compilado de Evidencias)
 
+### Salida de Integración (`ReservaCrudIntegrationTests`):
+```text
+Serie de pruebas para SistemaReservaHotel.IntegrationTests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patrón especificado.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.11)
+[xUnit.net 00:00:00.27]   Discovering: SistemaReservaHotel.IntegrationTests
+[xUnit.net 00:00:00.39]   Discovered:  SistemaReservaHotel.IntegrationTests
+[xUnit.net 00:00:00.46]   Starting:    SistemaReservaHotel.IntegrationTests
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 18 entities to in-memory store.
+info: Microsoft.EntityFrameworkCore.Update[30100]
+      Saved 35 entities to in-memory store.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Hosting environment: Testing
+  Correctas SistemaReservaHotel.IntegrationTests.ReservaCrudIntegrationTests.PostCancelarReserva_ActualizaEstadoEnBaseDeDatosInMemory [2 s]
+  Correctas SistemaReservaHotel.IntegrationTests.ReservaCrudIntegrationTests.PostCancelarReserva_ConIdInexistente_Retorna404NotFound [16 ms]
+  Correctas SistemaReservaHotel.IntegrationTests.ReservaCrudIntegrationTests.PostCrearReserva_EnMismasFechasQueReservaActiva_RechazaPorColision [4 ms]
+  Correctas SistemaReservaHotel.IntegrationTests.ReservaCrudIntegrationTests.PostCrearReserva_PersisteEntidadEnBaseDeDatosInMemory [11 ms]
+
+La serie de pruebas se ejecutó correctamente.
+Pruebas totales: 4
+     Correcto: 4
+     Fallidas: 0
+    Omitidas: 0
+ Tiempo total: 4.2206 Segundos
+```
+
+### Salida de Unitarias (`ReservaPublicaServiceTests`):
 ```text
 Serie de pruebas para SistemaReservaHotel.UnitTests.dll (.NETCoreApp,Version=v10.0)
 1 archivos de prueba en total coincidieron con el patrón especificado.
@@ -67,7 +109,7 @@ Serie de pruebas para SistemaReservaHotel.UnitTests.dll (.NETCoreApp,Version=v10
 
 La serie de pruebas se ejecutó correctamente.
 Pruebas totales: 5
-     Correcto: 5 (100%)
+     Correcto: 5
      Fallidas: 0
     Omitidas: 0
  Tiempo total: 1.3858 Segundos
@@ -75,5 +117,5 @@ Pruebas totales: 5
 
 ---
 
-## 5. Declaración de Autonomía y Conformidad
-Este reporte certifica formalmente que las **5 pruebas unitarias asignadas a Camila Antonia Calderón Cortez** fueron ejecutadas y validadas con éxito de manera 100% aislada e independiente en `ReservaPublicaServiceTests.cs`, verificando el ciclo de vida CRUD y los mecanismos de anticolisión en la capa de negocio sin depender de servicios externos ni de los otros 3 integrantes, satisfaciendo a cabalidad los criterios de aceptación para la historia **US-SEC-01 (#1043)** y los casos de prueba **TC-03 (#1048)** y **TC-06 (#1051)** en Azure DevOps.
+## 5. Declaración de Cumplimiento
+Este reporte certifica que las **9 pruebas automatizadas (4 de integración + 5 unitarias)** asignadas a **Camila Antonia Calderón Cortez** fueron ejecutadas y aprobadas en un 100%, cumpliendo rigurosamente los criterios de aceptación para la historia **US-SEC-01 (#1043)** y los casos de prueba **TC-03 (#1048)** y **TC-06 (#1051)** en Azure DevOps y el Test Plan `#1054`.
