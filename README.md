@@ -24,6 +24,8 @@ Todos los documentos definitivos de la evaluación se encuentran centralizados e
 | **Informe de Diseño de Pruebas** | `Word (.docx)` | Documento formal con código en tema oscuro, 5 capturas oficiales de Azure DevOps y reflexiones | [📥 Descargar DOCX](docs/entregables/Presentacion_Diseno_Casos_Prueba_SistemaReservaHotel.docx) |
 | **Informe de Diseño de Pruebas** | `PDF (.pdf)` | Documento oficial exportado (22 páginas, sin portada, con formato institucional completo) | [📄 Ver / Descargar PDF](docs/entregables/Presentacion_Diseno_Casos_Prueba_SistemaReservaHotel.pdf) |
 | **Plantilla de Planificación de Pruebas** | `Excel (.xlsx)` | Matriz completa de 3 pestañas: Aceptación (TC-01 a TC-08), API (API-01 a API-16) y Unitarias (UT-01 a UT-21) | [📊 Descargar Excel](docs/entregables/Plantilla_Planificacion_Pruebas_SistemaReservaHotel.xlsx) |
+| **Dictamen de Auditoría Final** | `PDF (.pdf)` | Certificación formal de concordancia y cumplimiento normativo ISO 29119 | [📑 Ver / Descargar Dictamen PDF](docs/entregables/Auditoria_Final_Calidad_SistemaReservaHotel.pdf) |
+| **Dictamen de Auditoría Final** | `Word (.docx)` | Documento editable del dictamen de auditoría de calidad | [📥 Descargar Dictamen DOCX](docs/entregables/Auditoria_Final_Calidad_SistemaReservaHotel.docx) |
 
 ---
 
