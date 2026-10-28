@@ -63,31 +63,17 @@ steps:
     projects: '$(solution)'
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Ejecutar Suite QA (TC-01 a TC-08) y Generar TRX'
-  inputs:
-    command: 'test'
-    projects: '$(testProject)'
-    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(testResultsDir)"'
-  continueOnError: true # Permite capturar y publicar el fallo legítimo de TC-06
+- powershell: |
+    Write-Host "Ejecutando Pruebas de Aceptación (TC-01 a TC-08)..."
+    dotnet test "$(testProject)" --configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(testResultsDir)"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Ejecutar Pruebas Unitarias (UT-01 a UT-21) y Generar TRX'
-  inputs:
-    command: 'test'
-    projects: '$(unitTestProject)'
-    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_UnitTests.trx" --results-directory "$(testResultsDir)"'
-  continueOnError: true
-  condition: succeededOrFailed()
+    Write-Host "Ejecutando Pruebas Unitarias (UT-01 a UT-21)..."
+    dotnet test "$(unitTestProject)" --configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_UnitTests.trx" --results-directory "$(testResultsDir)"
 
-- task: DotNetCoreCLI@2
-  displayName: 'Ejecutar Pruebas de API (API-01 a API-16) y Generar TRX'
-  inputs:
-    command: 'test'
-    projects: '$(apiTestProject)'
-    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_ApiTests.trx" --results-directory "$(testResultsDir)"'
+    Write-Host "Ejecutando Pruebas de API (API-01 a API-16)..."
+    dotnet test "$(apiTestProject)" --configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_ApiTests.trx" --results-directory "$(testResultsDir)"
+  displayName: 'Ejecutar Suites de Pruebas (.NET 10) y Generar TRX'
   continueOnError: true
-  condition: succeededOrFailed()
 
 - task: PublishTestResults@2
   displayName: 'Publicar Resultados TRX en Azure Test Plans'
