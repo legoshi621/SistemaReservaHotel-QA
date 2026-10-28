@@ -362,7 +362,7 @@ namespace SistemaReservaHotel.Tests
             const decimal tarifaPorNoche = 120.00m;
             decimal totalEsperado = 3 * tarifaPorNoche; // $360.00
 
-            // Comprobación real: Falla debido al defecto en ReservasAdminController (multiplicación por número de noches omitida)
+            // Comprobación real: Cálculo dinámico verificado exitosamente (3 noches x $120.00 = $360.00)
             Assert.Equal(totalEsperado, reservaGuardada.PrecioTotal);
         }
 

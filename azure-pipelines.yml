@@ -22,6 +22,8 @@ variables:
   solution: 'SistemaReservaHotel/SistemaReservaHotel.slnx'
   buildConfiguration: 'Release'
   testProject: 'SistemaReservaHotel/SistemaReservaHotel.Tests/SistemaReservaHotel.Tests.csproj'
+  unitTestProject: 'SistemaReservaHotel/SistemaReservaHotel.UnitTests/SistemaReservaHotel.UnitTests.csproj'
+  apiTestProject: 'SistemaReservaHotel/SistemaReservaHotel.IntegrationTests/SistemaReservaHotel.IntegrationTests.csproj'
   testResultsDir: '$(Agent.TempDirectory)/TestResults'
 
 steps:
@@ -69,6 +71,24 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_QA_TestResults.trx" --results-directory "$(testResultsDir)"'
   continueOnError: true # Permite capturar y publicar el fallo legítimo de TC-06
 
+- task: DotNetCoreCLI@2
+  displayName: 'Ejecutar Pruebas Unitarias (UT-01 a UT-21) y Generar TRX'
+  inputs:
+    command: 'test'
+    projects: '$(unitTestProject)'
+    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_UnitTests.trx" --results-directory "$(testResultsDir)"'
+  continueOnError: true
+  condition: succeededOrFailed()
+
+- task: DotNetCoreCLI@2
+  displayName: 'Ejecutar Pruebas de API (API-01 a API-16) y Generar TRX'
+  inputs:
+    command: 'test'
+    projects: '$(apiTestProject)'
+    arguments: '--configuration $(buildConfiguration) --no-build --logger "trx;LogFileName=SistemaReservaHotel_ApiTests.trx" --results-directory "$(testResultsDir)"'
+  continueOnError: true
+  condition: succeededOrFailed()
+
 - task: PublishTestResults@2
   displayName: 'Publicar Resultados TRX en Azure Test Plans'
   inputs:
@@ -76,7 +96,7 @@ steps:
     testResultsFiles: '**/*.trx'
     searchFolder: '$(testResultsDir)'
     mergeTestResults: true
-    testRunTitle: 'Ejecución Automatizada QA - Test Plan #1054'
+    testRunTitle: 'Ejecución Automatizada QA - Test Plan #1054 (Unitarias, API y Aceptación)'
     failTaskOnFailedTests: false
   condition: succeededOrFailed()
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SistemaReservaHotel.DataAccess;
 using SistemaReservaHotel.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +48,8 @@ namespace SistemaReservaHotel.Web.Controllers
 
             if (temporadaPrecio != null)
             {
-                reserva.PrecioTotal = temporadaPrecio.Precio;
+                int noches = reserva.Noches > 0 ? reserva.Noches : 1;
+                reserva.PrecioTotal = temporadaPrecio.Precio * noches;
             }
 
             _context.Reservas.Add(reserva);
